@@ -1,0 +1,17 @@
+specs/
+.venv/
+__pycache__/
+ui/.venv/
+hooks/.venv/
+
+
+
+/__pycache__
+
+# Roadmap
+ui/
+
+.vscode/
+
+#tests
+.pytest_cache/

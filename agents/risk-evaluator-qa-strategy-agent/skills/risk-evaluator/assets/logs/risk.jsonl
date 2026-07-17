@@ -1,0 +1,1 @@
+{"timestamp": "2026-07-01 14:30:00", "rf_id": "RF-ID-00", "tags": ["Authentication", "Core"], "impact": 5, "complexity": 4, "risk_score": 4.7, "severity": "High", "probability": "Medium-High", "owasp_id": "A07", "justification": "Credentials management and OAuth 2.0 tokens."}

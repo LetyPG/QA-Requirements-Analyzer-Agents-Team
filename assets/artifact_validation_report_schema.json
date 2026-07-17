@@ -1,0 +1,143 @@
+{
+    "$schema": "http://json-schema.org/draft-07/schema#",
+    "title": "Artifact Validation Report Schema",
+    "description": "Schema for consolidating the final artifact validation report by the Orchestrator Agent.",
+    "type": "object",
+    "properties": {
+        "rf_id": {
+            "type": "string",
+            "description": "Requirement ID being validated."
+        },
+        "user_story": {
+            "type": "string",
+            "description": "User Story being validated."
+        },
+        "context": {
+            "type": "string",
+            "description": "Context used for validation."
+        },
+        "successful_validations": {
+            "type": "array",
+            "description": "List of successfully validated artifacts for each sub-agent.",
+            "items": {
+                "type": "object",
+                "properties": {
+                    "sub_agent": {
+                        "type": "string",
+                        "description": "Name of the sub-agent that generated the artifact."
+                    },
+                    "artifact_name": {
+                        "type": "string",
+                        "description": "Path of the artifact file."
+                    },
+                    "file_exists": {
+                        "type": "boolean",
+                        "description": "Indicates if the output file exists."
+                    },
+                    "correct_format": {
+                        "type": "boolean",
+                        "description": "Indicates if the artifact is in the correct overall format (e.g., valid Markdown/JSON)."
+                    },
+                    "sections": {
+                        "type": "array",
+                        "description": "Specific sections validated within the artifact.",
+                        "items": {
+                            "type": "object",
+                            "properties": {
+                                "section_name": {
+                                    "type": "string",
+                                    "description": "Name of the required section."
+                                },
+                                "is_present": {
+                                    "type": "boolean",
+                                    "description": "Indicates if the section is present."
+                                },
+                                "matched_data": {
+                                    "type": "string",
+                                    "description": "Details of the information present and matched in the section."
+                                },
+                                "functional_validation": {
+                                    "type": "object",
+                                    "description": "Functional validation specifics like Gherkin syntax or OWASP ID matching.",
+                                    "properties": {
+                                        "validation_type": {
+                                            "type": "string",
+                                            "enum": [
+                                                "gherkin_syntax",
+                                                "owasp_risk_id_match",
+                                                "json_schema_compliance",
+                                                "none"
+                                            ]
+                                        },
+                                        "is_valid": {
+                                            "type": "boolean"
+                                        },
+                                        "details": {
+                                            "type": "string"
+                                        }
+                                    },
+                                    "required": [
+                                        "validation_type",
+                                        "is_valid"
+                                    ]
+                                }
+                            },
+                            "required": [
+                                "section_name",
+                                "is_present",
+                                "matched_data"
+                            ]
+                        }
+                    }
+                },
+                "required": [
+                    "sub_agent",
+                    "artifact_name",
+                    "file_exists",
+                    "correct_format",
+                    "sections"
+                ]
+            }
+        },
+        "failure_validations": {
+            "type": "array",
+            "description": "List of failed validations for artifacts.",
+            "items": {
+                "type": "object",
+                "properties": {
+                    "sub_agent": {
+                        "type": "string"
+                    },
+                    "artifact_name": {
+                        "type": "string"
+                    },
+                    "error_category": {
+                        "type": "string",
+                        "enum": [
+                            "file_missing",
+                            "invalid_format",
+                            "missing_section",
+                            "data_mismatch",
+                            "functional_validation_failed"
+                        ]
+                    },
+                    "error_details": {
+                        "type": "string",
+                        "description": "Detailed explanation of the failure."
+                    }
+                },
+                "required": [
+                    "sub_agent",
+                    "artifact_name",
+                    "error_category",
+                    "error_details"
+                ]
+            }
+        }
+    },
+    "required": [
+        "rf_id",
+        "successful_validations",
+        "failure_validations"
+    ]
+}

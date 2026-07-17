@@ -1,0 +1,24 @@
+{
+  "rf_id": "RF-ID-00",
+  "feature": "Autenticación de Usuario (Login)",
+  "date": "2026-05-10",
+  "input_analysis": {
+    "impact_assigned": 5,
+    "complexity_assigned": 4,
+    "justification": "Credentials management and OAuth 2.0 tokens. Integration with the FastAPI backend. (Manejo de credenciales y tokens OAuth 2.0. Integración con el backend FastAPI."
+  },
+  "final_result": {
+    "raw_score": 4.7,
+    "severity_level": "Critical",
+    "recommendation": "It requires Security Testing and API Contract Testing. (Requiere Security Testing y API Contract Testing."
+  },
+  "owasp_analysis": {
+    "matches": [
+      "A03 Injection"
+    ],
+    "owasp_score": "Low (1 match)",
+    "complexity_adjustment": "+1"
+  },
+  "automation_candidate": true,
+  "validation_status": "Passed"
+}

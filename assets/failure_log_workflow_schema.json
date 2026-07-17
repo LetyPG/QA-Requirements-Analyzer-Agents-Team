@@ -1,0 +1,108 @@
+{
+    "$schema": "http://json-schema.org/draft-07/schema#",
+    "title": "Failure Log Workflow Schema (ADR)",
+    "description": "Schema for the failure log workflow, acting as an Architectural Decisions Record (ADR) to prevent infinite fixing loops and detect failure patterns.",
+    "type": "object",
+    "properties": {
+        "rf_id": {
+            "type": "string",
+            "description": "Requirement ID that encountered the failure."
+        },
+        "timestamp": {
+            "type": "string",
+            "format": "date-time",
+            "description": "Timestamp when the fixing loop was aborted and this ADR was generated."
+        },
+        "failed_agent": {
+            "type": "string",
+            "enum": [
+                "bdd-validation-analyst-agent",
+                "risk-evaluator-qa-assessor-agent"
+            ],
+            "description": "The sub-agent that failed to resolve the issues within the allowed iterations."
+        },
+        "fixing_loop_iterations_attempted": {
+            "type": "integer",
+            "description": "The number of fixing loop iterations attempted before aborting (e.g., 2 for BDD, 3 for Risk Evaluator)."
+        },
+        "unresolved_validation_failures": {
+            "type": "array",
+            "description": "List of the validation gaps that could not be resolved.",
+            "items": {
+                "type": "object",
+                "properties": {
+                    "error_type": {
+                        "type": "string",
+                        "description": "Type of unresolved error (e.g., missing_section, format_error, functional_error)."
+                    },
+                    "details": {
+                        "type": "string",
+                        "description": "Specific details about the unresolved gap."
+                    }
+                },
+                "required": [
+                    "error_type",
+                    "details"
+                ]
+            }
+        },
+        "decision_record": {
+            "type": "string",
+            "description": "Architectural decision recorded (e.g., 'Fixing loop aborted due to max iterations. Proceeded to Deliverables with failure status.')."
+        }
+    },
+    "required": [
+        "rf_id",
+        "timestamp",
+        "failed_agent",
+        "fixing_loop_iterations_attempted",
+        "unresolved_validation_failures",
+        "decision_record"
+    ],
+    "workflow_execution_information": {
+        "description": "Resources usage during workflow execution",
+        "headers": [
+            "Resorce",
+            "Sub-agent `bdd-validation-analyst-agent`",
+            "Sub-agent `risk-evaluator-qa-strategy-agent`",
+            "Orchestrator",
+            "Total"
+        ],
+        "bdd-validation-analyst-agent": {
+            "tokens": {
+                "input_tokens": "XXXXXXX",
+                "output_tokens": "XXXXXXX",
+                "total_tokens": "XXXXXXX"
+            },
+            "processing_time": "XXXXXXX",
+            "tools_called": "XXXXXXX",
+            "total_ram_used": "XXXXXXX"
+        },
+        "risk-evaluator-qa-assessor-agent": {
+            "tokens": {
+                "input_tokens": "XXXXXXX",
+                "output_tokens": "XXXXXXX",
+                "total_tokens": "XXXXXXX"
+            },
+            "processing_time": "XXXXXXX",
+            "tools_called": "XXXXXXX",
+            "total_ram_used": "XXXXXXX"
+        },
+        "orchestrator": {
+            "tokens": {
+                "input_tokens": "XXXXXXX",
+                "output_tokens": "XXXXXXX",
+                "total_tokens": "XXXXXXX"
+            },
+            "processing_time": "XXXXXXX",
+            "tools_called": "XXXXXXX",
+            "total_ram_used": "XXXXXXX"
+        },
+        "total_execution_resources": {
+            "total_tokens": "XXXXXXX",
+            "total_processing_time": "XXXXXXX",
+            "total_tools_called": "XXXXXXX",
+            "total_ram_used": "XXXXXXX"
+        }
+    }
+}

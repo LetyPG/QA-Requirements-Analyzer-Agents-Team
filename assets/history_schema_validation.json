@@ -1,0 +1,25 @@
+{
+    "$schema": "http://json-schema.org/draft-07/schema#",
+    "rf_id": "RF-ID-00",
+    "feature": "feature_name",
+    "date": "2026-05-10",
+    "input_analysis": {
+        "impact_assigned": 5,
+        "complexity_assigned": 4,
+        "justification": "It affects the persistence of data in the cart (Critical Flow)."
+    },
+    "final_result": {
+        "raw_score": 4.7,
+        "severity_level": "severity_level",
+        "recommendation": "recommendation according to severity level and complexity"
+    },
+    "owasp_analysis": {
+        "matches": [
+            "OWASP Top 10 Matches- Aplication Risk ID "
+        ],
+        "owasp_score": "security_level",
+        "complexity_adjustment": "+1"
+    },
+    "automation_candidate": true,
+    "validation_status": "Passed"
+}

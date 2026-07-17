@@ -1,0 +1,58 @@
+{
+  "evaluations": [
+    {
+      "test_case_id": "TC-BDD-01",
+      "description": "Validates successful translation of a standard payment requirement.",
+      "inputs": {
+        "ieee_requirement": "RF-ID-01: The system must process payments and the US[as a customer I want to pay with CC to complete my purchase]",
+        "project_context": "ShopSwift E-Commerce Manifesto"
+      },
+      "assertions": [
+        {
+          "type": "schema_validation",
+          "target": "output",
+          "condition": "matches_json_schema",
+          "schema_keys": [
+            "rf_id",
+            "original_requirement",
+            "gherkin_scenarios",
+            "validation_status"
+          ]
+        },
+        {
+          "type": "content_validation",
+          "target": "gherkin_scenarios",
+          "condition": "min_length",
+          "value": 8
+        },
+        {
+          "type": "content_validation",
+          "target": "validation_status",
+          "condition": "equals",
+          "value": "Success"
+        }
+      ]
+    },
+    {
+      "test_case_id": "TC-BDD-02",
+      "description": "Validates failure handling when requirement is missing.",
+      "inputs": {
+        "ieee_requirement": "",
+        "project_context": "ShopSwift E-Commerce Manifesto"
+      },
+      "assertions": [
+        {
+          "type": "content_validation",
+          "target": "validation_status",
+          "condition": "equals",
+          "value": "Failed"
+        },
+        {
+          "type": "content_validation",
+          "target": "error_message",
+          "condition": "not_empty"
+        }
+      ]
+    }
+  ]
+}

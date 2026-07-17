@@ -1,0 +1,208 @@
+{
+  "$schema": "http://json-schema.org/draft-07/schema#",
+  "title": "Final Requirements Validation Report Schema",
+  "description": "JSON schema for the final requirement analysis report consolidating the artifacts from sub-agents.",
+  "type": "object",
+  "properties": {
+    "metadata": {
+      "type": "object",
+      "properties": {
+        "timestamp": {
+          "type": "string",
+          "format": "date-time",
+          "description": "YYYY-MM-DD HH:MM:SS (UTC)"
+        },
+        "rf_id": {
+          "type": "string",
+          "description": "Input requirement ID"
+        },
+        "status": {
+          "type": "string",
+          "enum": [
+            "PASS",
+            "FAIL"
+          ]
+        },
+        "trace_id": {
+          "type": "string",
+          "description": "Unique identifier for the hook execution and workflow trace"
+        },
+        "ai_model_used_and_version": {
+          "type": "string"
+        }
+      },
+      "required": [
+        "timestamp",
+        "rf_id",
+        "status",
+        "trace_id",
+        "ai_model_used_and_version"
+      ]
+    },
+    "requirements_validations_sections": {
+      "type": "object",
+      "properties": {
+        "requirement_overview": {
+          "type": "string",
+          "description": "1. Requirement Overview: MUST include the original IEEE requirement text."
+        },
+        "acceptance_criteria_bdd": {
+          "type": "array",
+          "items": {
+            "type": "string"
+          },
+          "minItems": 5,
+          "description": "2. Acceptance Criteria (BDD): MUST contain at least 5 BDD scenarios written in strict Gherkin format.",
+          "validation_refinement_questions": {
+            "type": "array",
+            "items": {
+              "type": "string"
+            },
+            "description": "2.1 Validation Refinement Questions (Optional): MUST contain type, field, pattern and questions"
+          }
+        },
+        "validation_rules_nfrs": {
+          "type": "object",
+          "description": "3. Validation Rules - Non Functional Requirements (NFRs)",
+          "properties": {
+            "performance": {
+              "type": "string"
+            },
+            "reliability": {
+              "type": "string"
+            },
+            "security": {
+              "type": "string"
+            },
+            "usability": {
+              "type": "string"
+            },
+            "accessibility": {
+              "type": "string"
+            },
+            "compliance": {
+              "type": "string"
+            },
+            "ux": {
+              "type": "string"
+            }
+          },
+          "required": [
+            "performance",
+            "reliability",
+            "security",
+            "usability",
+            "accessibility",
+            "compliance",
+            "ux"
+          ]
+        },
+        "risk_matrix_analysis": {
+          "type": "object",
+          "description": "4. Risk Matrix Analysis",
+          "properties": {
+            "severity_level": {
+              "type": "string",
+              "enum": [
+                "High",
+                "Medium",
+                "Low"
+              ]
+            },
+            "probability_level": {
+              "type": "string"
+            },
+            "technical_justification": {
+              "type": "string"
+            },
+            "owasp_top_10_application_risk_id": {
+              "type": "string",
+              "description": "If included, must match the one in history_{RF_ID}.json and exist in reference_risk_standard.md."
+            }
+          },
+          "required": [
+            "severity_level",
+            "probability_level",
+            "technical_justification"
+          ]
+        },
+        "recommended_qa_strategy": {
+          "type": "array",
+          "items": {
+            "type": "string"
+          },
+          "minItems": 1,
+          "description": "5. Recommended QA Strategy: MUST suggest at least one test level (e.g., Smoke, API, E2E) correlated with calculated risk."
+        }
+      },
+      "required": [
+        "requirement_overview",
+        "acceptance_criteria_bdd",
+        "validation_rules_nfrs",
+        "risk_matrix_analysis",
+        "recommended_qa_strategy"
+      ]
+    },
+    "workflow_execution_information": {
+      "type": "object",
+      "properties": {
+        "bdd-validation-analyst-agent": {
+          "$ref": "#/definitions/resource_usage"
+        },
+        "risk-evaluator-qa-strategy-agent": {
+          "$ref": "#/definitions/resource_usage"
+        },
+        "orchestrator": {
+          "$ref": "#/definitions/resource_usage"
+        },
+        "total": {
+          "$ref": "#/definitions/resource_usage"
+        }
+      },
+      "required": [
+        "bdd-validation-analyst-agent",
+        "risk-evaluator-qa-strategy-agent",
+        "orchestrator",
+        "total"
+      ]
+    }
+  },
+  "required": [
+    "metadata",
+    "requirements_validations_sections",
+    "workflow_execution_information"
+  ],
+  "definitions": {
+    "resource_usage": {
+      "type": "object",
+      "properties": {
+        "input_tokens": {
+          "type": "integer"
+        },
+        "output_tokens": {
+          "type": "integer"
+        },
+        "total_tokens": {
+          "type": "integer"
+        },
+        "processing_time": {
+          "type": "string"
+        },
+        "tools_called": {
+          "type": "integer"
+        },
+        "total_ram_used": {
+          "type": "string"
+        }
+      },
+      "required": [
+        "input_tokens",
+        "output_tokens",
+        "total_tokens",
+        "processing_time",
+        "tools_called",
+        "total_ram_used"
+      ]
+    }
+  }
+}

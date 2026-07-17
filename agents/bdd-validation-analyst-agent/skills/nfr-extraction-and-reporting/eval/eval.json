@@ -1,0 +1,57 @@
+{
+  "evaluations": [
+    {
+      "test_case_id": "TC-NFR-01",
+      "description": "Validates successful extraction and markdown formatting.",
+      "inputs": {
+        "internal_handoff": {
+          "rf_id": "RF-ID-01",
+          "gherkin_scenarios": "..."
+        },
+        "ieee_requirement": "RF-ID-01: System must process payments.",
+        "project_context": "Performance: <200ms. Security: Encryption required."
+      },
+      "assertions": [
+        {
+          "type": "file_generation",
+          "target": "../../outputs/bdd_validation_RF-ID-01.md",
+          "condition": "exists"
+        },
+        {
+          "type": "schema_validation",
+          "target": "output_json",
+          "condition": "matches_json_schema",
+          "schema_keys": [
+            "rf_id",
+            "bdd_validation_file",
+            "status",
+            "next_action"
+          ]
+        },
+        {
+          "type": "content_validation",
+          "target": "output_json.status",
+          "condition": "equals",
+          "value": "success"
+        }
+      ]
+    },
+    {
+      "test_case_id": "TC-NFR-02",
+      "description": "Validates failure handling when Skill 1 inputs are missing.",
+      "inputs": {
+        "internal_handoff": {},
+        "ieee_requirement": "RF-ID-02: User login.",
+        "project_context": "Security: OAuth 2.0"
+      },
+      "assertions": [
+        {
+          "type": "content_validation",
+          "target": "output_json.status",
+          "condition": "equals",
+          "value": "failed"
+        }
+      ]
+    }
+  ]
+}

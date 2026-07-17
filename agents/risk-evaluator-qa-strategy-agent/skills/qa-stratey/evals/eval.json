@@ -1,0 +1,53 @@
+{
+  "evaluations": [
+    {
+      "test_case_id": "TC-TSM-01",
+      "description": "Validates successful test strategy mapping and payload generation.",
+      "inputs": {
+        "risk_metadata_handoff": {
+          "risk_metadata": {
+            "rf_id": "RF-ID-01",
+            "raw_score": 8.5,
+            "severity_level": "High",
+            "probability_of_failure": "Medium-High"
+          },
+          "justification": {
+            "business_impact": "Critical",
+            "technical_debt_risk": "High",
+            "standard_reference": "Ref 1.0"
+          }
+        },
+        "bdd_analysis": "outputs/bdd_validation_RF-ID-01.md content",
+        "qa_standards": "reference/qa_strategy_standards.md content"
+      },
+      "assertions": [
+        {
+          "type": "schema_validation",
+          "target": "output_json",
+          "condition": "matches_json_schema",
+          "schema_keys": [
+            "requirement_id",
+            "risk_metadata",
+            "justification",
+            "test_levels",
+            "automation_candidate",
+            "report_path",
+            "status"
+          ]
+        },
+        {
+          "type": "content_validation",
+          "target": "output_json.justification.business_impact",
+          "condition": "equals",
+          "value": "Critical"
+        },
+        {
+          "type": "content_validation",
+          "target": "output_json.status",
+          "condition": "equals",
+          "value": "COMPLETED"
+        }
+      ]
+    }
+  ]
+}

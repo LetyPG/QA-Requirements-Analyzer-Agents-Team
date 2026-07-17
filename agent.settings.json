@@ -1,0 +1,15 @@
+{
+    "hooks": {
+        "PreToolUse": [
+            {
+                "matcher": "Bash|Read|Cat|Write|Edit",
+                "hooks": [
+                    {
+                        "type": "command",
+                        "command": "PYTHONPATH=. python3 hooks/security_language.py"
+                    }
+                ]
+            }
+        ]
+    }
+}

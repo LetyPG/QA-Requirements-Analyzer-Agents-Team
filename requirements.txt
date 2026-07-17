@@ -1,0 +1,23 @@
+# Python dependencies for the hooks/ layer only.
+# Install with: pip install -r requirements.txt
+#
+# These libraries are intentionally isolated from any main project
+# requirements to keep the hook stateless and dependency-minimal.
+
+# Offline, deterministic language detection.
+# Does NOT call any external API — all detection runs locally.
+# Supports: en, es, pt, fr, de, it (and 70+ other languages).
+# https://github.com/pemistahl/lingua-py
+
+lingua-language-detector>=2.0.0
+
+# MIME type detection via libmagic.
+# Required for detecting disguised file types (e.g. payload.pdf.exe).
+# System dependency:
+# sudo apt-get install libmagic1   (Debian/Ubuntu)
+# brew install libmagic              (macOS)
+python-magic>=0.4.27
+
+
+# Test requirements
+pytest>=8.0.0

@@ -1,0 +1,23 @@
+{
+  "requirement_id": "{RF_ID}",
+  "risk_metadata": {
+    "rf_id": "{RF_ID}",
+    "raw_score": 8.5,
+    "severity_level": "High",
+    "probability_of_failure": "Medium-High"
+  },
+  "justification": {
+    "business_impact": "It affects the persistence of data in the cart (Critical Flow).",
+    "technical_debt_risk": "High complexity due to integration with Redis cache.",
+    "standard_reference": "ShopSwift_Risk_Std_v1.2 - Section 4.2: Transaction Integrity."
+  },
+  "test_levels": [
+    "Unit",
+    "API Contract",
+    "Security",
+    "E2E UI"
+  ],
+  "automation_candidate": true,
+  "report_path": "outputs/bdd_validation_{RF_ID}.md",
+  "status": "COMPLETED"
+}
