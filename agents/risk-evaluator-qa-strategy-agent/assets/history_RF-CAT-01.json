@@ -1,0 +1,9 @@
+{
+  "rf_id": "RF-CAT-01",
+  "risk_history": [
+    {
+      "timestamp": "2026-07-17 17:03:21 (UTC)",
+      "owasp_top_10_application_risk_id": "A03:2021-Injection"
+    }
+  ]
+}

@@ -102,8 +102,8 @@ Extract the data of the tool-calls meemory and log system. Include:
 
 ### 5. File Generation:
 - Generate the final evaluation artifact by merginmg the information related to functional behavior and non-functional requirements in  a single output artifact.
-- The generated artifact MUST strictly follow the schema provided in `assets/dd_validation_template.md`. Include all required sections and information.
-- You will storaged this artifact in `../outputs/bdd-validation-analyst/` folder as `bdd_validation_{RF_ID}.md`.
+- The generated artifact MUST strictly follow the schema provided in `assets/bdd_validation_template.md`. Include all required sections and information.
+- You will storaged this artifact in `agents/bdd-validation-analyst-agent/outputs/` folder as `bdd_validation_{RF_ID}_{timestamp}.md`.
 
 ### 6. Self-Validation (Quality Verification):
 Before generating the artifact and handoff payload to the next sub-agent, you must verify your output to meet the following quality criteria:
@@ -134,7 +134,7 @@ Before generating the artifact and handoff payload to the next sub-agent, you mu
 
 ---
 
-## Output File: `outputs/bdd_validation_{RF_ID}_{timestamp}.md`
+## Output File: `agents/bdd-validation-analyst-agent/outputs/bdd_validation_{RF_ID}_{timestamp}.md`
 
 `bdd_validation_{RF_ID}_{timestamp}.md` file MUST strictly follow the `assets/bdd_validation_template.md` .
 
@@ -155,7 +155,7 @@ This is the only payload that the agent will deliver outwards upon completing it
 {
   "rf_id": "{RF_ID}",
   "user_story": "{user_story}",
-  "bdd_validation_file": "${pathTo}/outputs/bdd_validation_{RF_ID}_{timestamp}.md",
+  "bdd_validation_file": "agents/bdd-validation-analyst-agent/outputs/bdd_validation_{RF_ID}_{timestamp}.md",
   "status": "success",
   "next_action": "evaluate_risk_and_strategy"
 }

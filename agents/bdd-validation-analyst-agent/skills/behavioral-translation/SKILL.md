@@ -22,7 +22,7 @@ metadata:
 
 ## **Internal Process:**
 
-The skill operates under a 5-stage process:
+The skill operates under a seven-stage process:
 1. **Input Validation**
 2. **Extraction**
 3. **Analysis**
@@ -67,10 +67,10 @@ Extracts the `RF_ID` to maintain traceability.
 - Identifies the precondition (Given), the triggering action (When) and the observable result (Then).
 
 ### 4. Generation:
-- Generates a minimum of 11 Aceptance Criteros as User Scenarios, expand this analysis into:
-   - 3 Happy paths
-   - 4 Alternative flows/Boundary conditions- Edge Cases
-   - 4 Error scenarios 
+- Generates a **minimum of 11 Acceptance Criteria as User Scenarios** (AC), expand this analysis into:
+   - 3 **Happy paths**
+   - 4 **Alternative flows/Boundary conditions- Edge Cases**
+   - 4 **Error scenarios** 
 
 **Rule**: 
 - Use as reasoning parameter the reference file `reference/requirements_analysis_techniques.md`, which contains standards  techniques, such as: Example Mapping, Impact Mapping,  Story Mapping
@@ -79,7 +79,7 @@ Extracts the `RF_ID` to maintain traceability.
 
 ### 5. Style Conventions (Gherkin):
 
-The Acepytance Criterias considered the User Scenarios must be ensure its complienace with the fallowing Gherkin Style Conventions
+The Aceptance Criterias considered as the User Scenarios must be ensure its compliance with the fallowing Gherkin Style Conventions
    - Use strictly English keywords (`Given`, `When`, `Then`, `And`, `But`).
    - Scenario names must be concise and descriptive.
    - Do not use UI-specific implementation details (e.g., "click the red button"), use behavior-focused language (e.g., "submit the payment form").

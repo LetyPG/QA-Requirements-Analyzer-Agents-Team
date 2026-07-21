@@ -3,13 +3,29 @@
 This file contains detailed technical information explaining how the system achieves the requirements refinement process, and how the sub-agents represent the solution design.
 This file answers: **How was the Requirements Refinement process broken down into sub-agents as a human intellectual decomposition?**
 
-- [System-Level Decomposition Summary](#system-level-decomposition-summary)
-- [Orchestrator](#orchestrator)
-- [Sub-Agent A: BDD Validation Analyst](#sub-agent-a-bdd-validation-analyst)
-- [Sub-Agent B: Risk Evaluator & QA Strategy](#sub-agent-b-risk-evaluator--qa-strategy)
+| Index | Description|
+| ----- | -----|
+|[Problem Origin](#problem-origin) | Problem context |
+|[System-Level Decomposition Summary](#system-level-decomposition-summary) | Problem Descomposition in a Engineering System, detail architecture decisions and reference principles based applied |
+|[Orchestrator](#orchestrator) | Orchestrator details as the main component of the system  and brain orchestrate the workflow |
+|[Sub-Agent A: BDD Validation Analyst](#sub-agent-a-bdd-validation-analyst) | BDD Validation Analyst details analyze functional requirements and derive acceptance criteria as BDD/Gherkin scenarios, extract NFRs, also check for inconsistencies or ambiguities in the requirements and generate refinement validation questions for the human stakeholders |
+|[Sub-Agent B: Risk Evaluator & QA Strategy](#sub-agent-b-risk-evaluator--qa-strategy) | Risk Evaluator & QA Strategy details, calculate impact score based on business impact and technical risks, and finally define a risk-based testing strategy |
 
 
 ---
+
+## Problem Origin
+
+In a consulting scenario, I worked with a startup that needed stronger quality assurance practices on eaerly development phases, but did not have a dedicated QA professional. To address this gap, I developed a solution to improve requirements before development begins, this was concibe as a **Shift-Left Quality** approach, which directly impacts on the **Software Development Life Cycle (SDLC) and the Testing Development Life Cycle (TDLC)** by using AI Agents, think on this as a LLM narrow capability which enhance and conditionated its reasoning trough specific parameters and knowledge bases, that reproduce the intelectual human process as a Software QA Specialist on Requirement Analysis, this increase the deterministic validation, reduce hallucinations, and variability of solution process in consecuence the response reliability and consistency, and finally augmented by human oversight and decision-making authority.
+
+This framework analyzes functional requirements written in IEEE-style RF format together with User Stories, derives acceptance criteria as BDD/Gherkin scenarios, identifies applicable non-functional requirements, performs security-oriented analysis inspired by threat modeling, estimates business-impact risks, and recommends a risk-based testing strategy.
+
+Each subagent applies established software quality and testing references, including ISTQB, IEEE Std 830-1998, IEEE 29119, and OWASP Top 10, to provide structured, evidence-oriented assistance during requirements refinement.
+
+The framework is designed as an **AI EngineeringOps** solution: 
+AI agents orchestrate the analysis process, but the final responsibility for requirement approval, prioritization, and quality decisions remains with the human team. Its goal is to increase refinement efficiency, expose hidden quality concerns early, and support QA professionals, analysts, and product teams in producing implementation-ready requirements.
+
+>[Back to Top](#index)
 
 ## System-Level Decomposition Summary
 
@@ -31,7 +47,7 @@ The intellectual decomposition follows a **separation of concerns** model where 
 - **Fail-fast with traceability:** Every validation failure emits a structured JSON error with trace information for end-to-end audit
 - **Standards as harness:** Every reasoning step is grounded in a reference file in the skill's `reference/` directory — the LLM cannot deviate from the standard framework
 
->[Back to Top](#quick-link-reference)
+>[Back to Top](#index)
 
 
 **SOLID Principles Application**
@@ -77,7 +93,7 @@ The Orchestrator is the **central router and state manager** of the entire frame
 > You could see rules, flow, ilustrative diagrams, contraints an contract scema used for validation. 
 > You could also see the orchestrator skills details for validation, fixing loop,  failure hanlding and user guidance for context generation.
 
->[Back to Top](#quick-link-reference)
+>[Back to Top](#index)
 
 ---
 
@@ -106,7 +122,7 @@ Separating these into two skills that represents 2 procedure scope funtional and
 
 > **Note:** For more detailed information see [BDD Validation Analyst system Prompt](../agents/bdd-validation-analyst-agent/bdd-validation-analyst-agent.md)
 
->[Back to Top](#quick-link-reference)
+>[Back to Top](#index)
 
 ---
 
@@ -164,7 +180,7 @@ Example:
 - Every scenario must trace to a requirement, rule, task, or business impact
 - If no impact can be identified, report weak traceability instead of generating speculative scenarios
 
->[Back to Top](#quick-link-reference)
+>[Back to Top](#index)
 
 ---
 
@@ -185,7 +201,7 @@ Example:
 |---|---|---|
 | **Non-functional requirements (NFRs): Definitions, Categories, and Examples, NFR patterns** | `skills/nfr-extraction-and-reporting/reference/nfr_analysis.md` | Non-functional requirements (NFRs): Definitions, Categories, and Examples, NFR patterns |
 
->[Back to Top](#quick-link-reference)
+>[Back to Top](#index)
 
 ---
 
@@ -208,7 +224,7 @@ This separation in 2 skills procedure allows to restrict scopes, optimizing reas
 
 > **Note:** For more detailed information see [Risk Evaluator system Prompt](../agents/risk-evaluator-qa-strategy-agent/risk-evaluator-qa-strategy-agent.md)
 
->[Back to Top](#quick-link-reference)
+>[Back to Top](#index)
 
 ---
 
@@ -268,7 +284,7 @@ Applied as reasoning guards, here some examples:
 
 A deterministic Python script that enforces the weighted formula. Execution is **mandatory**, any deviation is classified as a critical failure. This moves the scoring decision out of the LLM's probabilistic reasoning domain into deterministic, reproducible code.
 
->[Back to Top](#quick-link-reference)
+>[Back to Top](#index)
 
 ---
 
@@ -304,5 +320,5 @@ Defines the decision matrix for selecting test levels based on risk and NFR prof
 | Performance | Performance/Load Testing |
 | UX/Accessibility | Accessibility Testing (WCAG 2.1 AA) |
 
->[Back to Top](#quick-link-reference)
+>[Back to Top](#index)
 

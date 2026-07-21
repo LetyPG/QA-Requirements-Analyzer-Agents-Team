@@ -108,21 +108,28 @@ This are  mandatory input, if it is missing, the skill must stop the evaluation,
 
 #### Risk Log Revision
 
--  Read the `assets/logs/risk.jsonl` file looking for requirements with similar tags (e.g., "Auth", "Catalog", "API").
+-  Read the `assets/logs/risk.jsonl` and identify similar requirement risk analysis patterns to mantain concistency, (e.g: Authentication Vulnerability -> User Login Requirement, User Register Requirement, User Logout Requirement, User Forgot Password Requirement, Role Managment Requirement, User Profile Management Requirement etc.):
+
 -  **Criterion:** If a similar requirement was previously rated as **Medium**, but the current calculation gives **High**, the skill must generate a clarification note in the `technical_justification` field explaining the deviation.
 
-#### Architectural Decision Recording (ADR)
+#### Update Architectural Decision Recording (ADR)
 
-Identify similar requirement risk analysis patterns in `/assets/logs/risk.jsonl` to mantain concistency, (e.g: Authentication Vulnerability -> User Login Requirement, User Register Requirement, User Logout Requirement, User Forgot Password Requirement, Role Managment Requirement, User Profile Management Requirement etc.):
-
-- Use the `assets/risk_log_schema.json` as guidance to record and store risk information in `/assets/logs/risk.jsonl`.
-- Update `assets/logs/risk.jsonl` by appending the new risk evaluation, this is use as system processing memory for future evaluations, following the ADR pattern.
+- - Update `agents/risk-evaluator-qa-strategy-agent/assets/logs/risk.jsonl` by appending the new risk evaluation, this is use as system processing memory for future evaluations, following the ADR pattern.
+- Use the `assets/risk_log_schema.json` as guidance to record and store risk information in `assets/logs/risk.jsonl`.
 
 #### History Records Management
 
 - Use the `assets/history_RF-ID_00.json` as example and generate a new history record for the current requirement, keeping the exact same `JSON` format as existing records to maintain historical consistency.
-- Storage the new generated record in `../outputs/history_records/history_{RF_ID}_{timestamp}.json`.
-- **File Path Rule:** ALWAYS use the exact directory path `../outputs/history_records/`. Never save to the root `assets/` directory.
+- Storage the new generated record in `agents/risk-evaluator-qa-strategy-agent/outputs/history-records/history_{RF_ID}_{timestamp}.json`.
+
+#### Backup Payload 
+
+Besides the handoff to the next skill, the `risk-evaluator` must create a "Backup" payload containing the exact same internal structure as the official Handoff JSON, but with one crucial additional field:
+
+- `artifact_status` is set to `BACKED_UP`.
+
+This backup payload must be stored in `agents/risk-evaluator-qa-strategy-agent/outputs/risk-evaluator-backups/backup_{RF_ID}_{timestamp}.json`, ensuring that even if the pipeline fails before the final step, the complete risk evaluation is preserved in a machine-readable format.
+
 
 ### 5. Self-Validation (Quality Verification):**
 Before handoff, you MUST review your own Risk Evaluation Report, following the next success criteria:
@@ -132,8 +139,11 @@ Before handoff, you MUST review your own Risk Evaluation Report, following the n
 - [ ] Double-check that the `Risk_Score` calculation is mathematically correct and falls within the appropriate threshold range for the assigned severity level.
 - [ ] Confirm that any historical data referenced in the report is consistent with the current evaluation.
 - [ ] Verify that the output format strictly adheres to the defined structure and that no critical information is missing.
-- [ ] Verify that the `history` file generated compliance the naming with `RF_ID` and `{timestamp}` in the file name: `history_{RF_ID}_{timestamp}.json`.
+- [ ] Verify the `history` file generated compliance the naming with `RF_ID` and `{timestamp}` in the file name: `history_{RF_ID}_{timestamp}.json`.
+- [ ] Verify the `history` file generated is stored in the `outputs/history-records/` directory, and that the file path is correct.
+- [ ] Verify the `assets/logs/risk.jsonl` file  was updated with the new risk evaluation following the ADR pattern.
 - [ ] Verify that the risk score and severity level are consistent with the NFRs extracted by Agent A and the risk standards.
+- [ ] Verify if the payload handoff backup was generated and stored in the `outputs/risk-evaluator-backups/backup_{RF_ID}_{timestamp}.json` following the naming convention
 
 ---
 
@@ -146,10 +156,10 @@ Before handoff, you MUST review your own Risk Evaluation Report, following the n
 | **Must** | You MUST use and follow strictly the reference `reference/risk_standards.md` to perform the risk evaluation process. |
 | **Must**| Execute the python script `scripts/risk_calculator.py` to compute the risk score according to the defined algorithm. Any deviation from this script is a critical failure.
 | **Must**| Always apply  **input validation policy**, stop the evaluation process if a mandatory input is missing (`Business_Priorities` or `bdd_validation_{RF_ID}.md`), register `"validation_status: "Failed"`, indicate the specific reason, and refrain from inferring missing information. |
-|**Must**| Never overwrite or delete existing risk logs information in `risk.jsonl`. It must append the new risk evaluation to the file, maintaining sorted order by RF_ID. 
-| **Should** | Keep updated the `risk.jsonl` file with the new risk evaluation, maintaining sorted order by RF_ID. |
+|**Must**| Never overwrite or delete existing risk logs information in `risk.jsonl`. It must append exactly ONE single-line, minified JSON object to the end of the file. Do NOT wrap the file in an array `[]` and do not format it with line breaks.
+| **Must** | Keep updated the `risk.jsonl` file with the new risk evaluation, maintaining sorted order by RF_ID. |
+| **Must**| Apply historical risk records from `risk.jsonl` and `history_RF-ID_00.json` to ensure consistency in risk scoring for similar requirements. |
 | **Could** | Include suggestion of risk control methodolog base on industries best practices, but not to exceed only 2 sentence with the reference to the control methodology, e.g: **`"risk_control_methodology": "static code analysis (SAST), dynamic code analysis (DAST)" `**  |
-| **Could**| Apply historical risk records from `risk.jsonl` and `history_RF-ID_00.json` to ensure consistency in risk scoring for similar requirements. |
 | **Could** | In case you detect a risk pattern in the `risk.jsonl` , e.g: repetitive high risk exposure in specific areas, it is recommended to share a brief summary of your findings | 
 |**Won't**| **Overwriting Policy** Overwrite or delete existing files or information within this agent scope or provided by `bdd-validation-analysis-agent` or `orchestrator`.|
 | **Won't** | **CRITICAL**Generate, suggest, or include any test types or QA strategy recommendations in the output Markdown or history JSON. Its only output is the risk diagnosis. |
@@ -162,15 +172,15 @@ Before handoff, you MUST review your own Risk Evaluation Report, following the n
 
 ### Artifacts and ADRs updates
 
-- You must output in `../outputs/history_records/history_{RF_ID}_{timestamp}.json`.
-- You must update the `risk.jsonl` file append the new risk evaluation.
+- You must output the final risk assessment in the file: `history_{RF_ID}_{timestamp}.json` and store in the specific directory `outputs/history-records/`
+- You must update the ``assets/logs/risk.jsonl` file append the new risk evaluation.
 
 ### Internal Handoff: 
 
 You must provide  the risk evaluation analysis and result to **Skill 2** `qa-strategy`, with:
 - all the data and metrics according to the `reference/risk_standards.md` and `scripts/risk_calculator.py`.
 - it is very important not missing information, because this will be used as main input processing for the next skill.
-- the `justification{}` property can be expanded, with specific key:values pairs, this means that it can contain more key:values pairs than the ones defined in the schema example, depending on the evaluation result example:
+- the `justification{}` property can be expanded, with specific key:values pairs within the `standard_reference` key. This means that it can contain more key:values pairs than the ones defined in the schema example, depending on the evaluation result example:
 
 ```json
   `standard_reference`: ["ShopSwift_Risk_Std_v1.2 - Risk ID: A08 - Software & Data Integrity Failures","Risk ID: A04 Insecure Design"],
@@ -191,20 +201,18 @@ Upon completion, the skill transfers control using the following structured hand
     "technical_debt_risk": "High complexity due to Redis cache integration.",
     "standard_reference": "ShopSwift_Risk_Std_v1.2 - Risk ID: A08 - Software & Data Integrity Failures",
     "technical_justification": "Note: Historical deviation - similar APIs were rated Medium, but this modifies the Redis core cache."
+  },
+  "risk_evaluator_artifacts_generated":{
+    "history_json_payload": "agents/risk-evaluator-qa-strategy-agent/outputs/history-records/history_{RF_ID}_{timestamp}.json",
+    "handoff_json_payload_backup": "agents/risk-evaluator-qa-strategy-agent/outputs/risk-evaluator-backups/backup_{RF_ID}_{timestamp}.json",
+    "risk_jsonl_updated": "agents/risk-evaluator-qa-strategy-agent/skills/risk-evaluator/assets/logs/risk.jsonl"
   }
 }
 ```
-### Backup Payload 
-
-Besides the handoff to the next skill, the Risk Evaluator must create a "Backup" payload containing the exact same internal structure as the official Handoff JSON, but with one crucial additional field:
-
-- `artifact_status` is set to `BACKED_UP`.
-
-This backup payload is stored in `../outputs/risk-evaluator-backups/backup_{RF_ID}_{timestamp}.json`, ensuring that even if the pipeline fails before the final step, the complete risk evaluation is preserved in a machine-readable format.
 
 ### JSON Clarification NOTE
 
 The agent must create two distinct `JSON` payloads and must not confuse them because they have different purposes and formats:
 
-* `JSON` for the historical record saved to the file `outputs/history_records/history_{RF_ID}_{timestamp}.json`.
+* `JSON` for the historical record saved to the file `outputs/history-records/history_{RF_ID}_{timestamp}.json`.
 * Handoff `JSON` (schema above) to create the backup and to output information to next skill and continue the workflow.

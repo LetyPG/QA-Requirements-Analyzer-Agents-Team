@@ -47,8 +47,8 @@ Focuses exclusively on interpreting the business priorities and the impact of th
 3. **Risk Evaluation:** Evaluate the technical impact (security, performance) and business impact (critical e-commerce flow). Asisted 
 by `reference/` directory for risk assessment standards and guidelines 
 4. **Calculate Risk Score:** Execute `/scripts/risk_calculator.py` (logic for weight-based risk calculation).  
-5. **Architecural Decision Record (ADR):** Identify similar requiremest risk analysis patterns in `/assets/logs/risk.jsonl` to mantain concistency, (e.g: Authentication Vulnerability -> User Login Requirement, User Register Requirement, User Logout Requirement, User Forgot Password Requirement, Role Managment Requirement, User Profile Management Requirement etc.). 
-   * Update `/assets/logs/risk.jsonl` by appending the new risk evaluation, this is use as system processing memory for future evaluations, following the ADR pattern.
+5. **Architecural Decision Record (ADR):** Identify similar requiremest risk analysis patterns in `skills/risk-evaluator/assets/logs/risk.jsonl` to mantain concistency, (e.g: Authentication Vulnerability -> User Login Requirement, User Register Requirement, User Logout Requirement, User Forgot Password Requirement, Role Managment Requirement, User Profile Management Requirement etc.). 
+   * Update `skills/risk-evaluator/assets/logs/risk.jsonl` by appending the new risk evaluation, this is use as system processing memory for future evaluations, following the ADR pattern.
 
 
 ### Skill 2: QA Strategy (`qa-strategy`)
@@ -117,8 +117,12 @@ sequenceDiagram
 ## Succes Criteria
 
 1. The outputs artifacts must contains the risk assessment  including scores , risk matrix and the recommended QA strategy based on business priorities and the stability of related functionalities.
-2. The  Architectural Decision Record (ADR) should be accomplished with the expected update pattern in `assets/logs/risk.jsonl`.
-3. The final artifacts must be created and stored in the `outputs/` folder.
+2. The  Architectural Decision Record (ADR) should be accomplished with the expected update pattern in `skills/risk-evaluator/assets/logs/risk.jsonl`.
+3. The final artifacts must be created and stored in the `outputs/` folder, in the propers sub-folders with its specifics artifacts and namings conventions, as fallow:
+  - [ ] Store risk assessment in `outputs/history-records/history_{RF_ID}_{timestamp}.json`
+  - [ ] Store `risk-evaluator` skill handoff payload backup in `outputs/risk-evaluator-backups/backup_{RF_ID}_{timestamp}.json`
+  - [ ] Store the recommended QA strategy payload in `outputs/strategy-payloads/strategy_{RF_ID}_{timestamp}.json`
+  - [ ] Store the final consolidated report in `outputs/risk-evaluator-qa-strategies/risk-evaluator-qa-strategy_{RF_ID}_{timestamp}.md`
 4. The final artifacts  must be delivered to the `orchestrator` with the signal to continue with the workflow.
 5. All resource comsuption was computed, recovered and included in the final artifact.
 
@@ -129,7 +133,7 @@ The agent finishes the workflow by delivering two artifacts to the Orchestrator 
 
 ### 1. The Final Artifact (Consolidated Report)
 
-The file in `outputs/risk_evaluator_qa_strategy_{RF_ID}_{timestamp}.md` contains:
+The file in `outputs/risk-evaluator-qa-strategies/risk-evaluator-qa-strategy_{RF_ID}_{timestamp}.md` contains:
 
 * `## 4. Risk Matrix Analysis`: Severity level, probability, and technical justification.
 * `## 5. Recommended QA Strategy`: Detailed strategy (Smoke, Integration, API, etc.).
@@ -144,7 +148,7 @@ Hand off to orchestrator by delivering the following payload json, as `strategy_
   "risk_score": "Critical | High | Medium | Low",
   "test_levels": ["Unit", "API Contract", "Security", "E2E UI"],
   "automation_candidate": true,
-  "report_path": "outputs/risk_evaluator_qa_strategy_{RF_ID}_{timestamp}.md"
+  "report_path": "outputs/risk-evaluator-qa-strategies/risk-evaluator-qa-strategy_{RF_ID}_{timestamp}.md"
 }
 
 ```

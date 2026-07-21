@@ -189,6 +189,17 @@ MAX_FILE_SIZE_MB: int = 10  # Change to your required limit
 
 > Increasing this value will increase token consumption and processing time per run. Evaluate the trade-off based on your project's context file sizes.
 
+#### Security and Injection Protection
+
+The hook enforces a deterministic Prompt Injection security gate using a **Structural Boundary Regex**.
+
+**Detection Logic**
+
+1. **Structural Boundary Check**: The regex anchors to the start and end of the user's message. This ensures that injected code cannot influence the system-level instructions or the hook's behavior. 
+For that reason only is allowed this instrction pattern at the begining of the prompt: `Run` followed of the input artifacts ( RF, and US), and at the end cannot be added any other instruction. Any intrsuction out of this boundaries is considered as an injection and cause the block of the request. This ensures the integrity of the system instructions.  
+
+2. **Input Extraction Logic**: The system only expects as input the RF IEE format and the user story as fallow: `RF-[rf_id]: [action] US[<user story>]`. The regex `"RF-[a-zA-Z0-9\-]+:\s*(.*?)\.?\s*US\[(.*?)\].?$"` is used to extract the `rf_id`, the `action`, and the `user_story` from the user's message.  
+
 #### Language Detection
 
 The hook detects the user's input language **offline** using `lingua-language-detector`. No external API call is made. The detected language is injected as a structured rule into all sub-agent invocations.

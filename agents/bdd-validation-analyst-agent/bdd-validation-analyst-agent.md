@@ -103,8 +103,9 @@ sequenceDiagram
     - preserve traceability to the original requirement (`RF_ID` and `User Story`);
     - successfully merge the functional BDD scenarios with strictly derived NFRs into a perfectly formatted Markdown report;
 3. All resource comsuption was computed, recovered and included in the final artifact.
-4. The final artifacts must be created and stored in the `outputs/` folder.
-5. The final artifact must be delivered with the signal to the next sub-agent.
+4. The final artifact must be created and stored correctly:
+  - [ ] Store the final Markdown report in the `outputs/` folder with the file name: `bdd_validation_{RF_ID}_{timestamp}.md`
+5. The final artifact must be delivered with the signal to the next sub-agent via the JSON Handoff payload.
 
 
 

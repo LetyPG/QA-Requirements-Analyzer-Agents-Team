@@ -20,7 +20,7 @@ Analyze the following requirement: {trigger_requirement}
 >Copy and paste this entire block into the chat.
 
 ```txt
-RF-CAT-01: "The system must allow filtering products by category and price."
+Run RF-CAT-01: "The system must allow filtering products by category and price."
 User Story:
 As a customer, I want to filter search results,
 to find products that fit my budget.
@@ -45,10 +45,9 @@ to find products that fit my budget.
 >Copy and paste this entire block into the chat.
 
 ```txt
-RF-PAY-05: "The system must process the order payment using credit cards securely."
+Run RF-PAY-05: "The system must process the order payment using credit cards securely."
 User Story:
-As a customer, I want to pay for my shopping cart,
-to receive my order at home.
+As a customer, I want to pay for my shopping cart, to receive my order at home.
 ```
 
 **Validation Objectives:**

@@ -17,6 +17,7 @@
 | [R6 — Unverifiable coverage claims](#r6) | Medium | Medium (eval golden datasets) | Pending |
 | [R7 — Risk log format drift](#r7) | Low-Medium | Low (JSON Lines + schema) | Mitigated |
 | [R9 — Manifesto staleness](#r9) | Low-Medium | Low (metadata + Orchestrator warning) | Mitigated |
+| [R14 — Security propmt blocks](#r14) | Low-Medium | Low (review and edit manually prompts ) | Accepted |
 
 ## **Pending** Risks Mitigations Recomendations
 
@@ -27,6 +28,9 @@ Some mitigations strategies relies on user configurations and practices, these a
 
 Sub-Agent B consumes Sub-Agent A's artifact directly. A low-quality or partial BDD output propagates as corrupted input, the risk score and strategy will be built on a weak foundation. The fixing loop partially mitigates this, but if Agent A's failure is structural (ambiguous requirement, missing context), retrying Agent A doesn't fix the root cause.
 
+Also in case of any component modifications (not recomended), or improvements on the agents logic, it must be do carrefully and after undertsand and had clarity about the real impact on the whole workflow, how it affects the dependencies, and the correct functioning of all the system.   
+
+
 *Partially Mitigated by the **classification-aware fixing loop***
 
 **Mitigation Roadmap:**
@@ -34,6 +38,7 @@ Sub-Agent B consumes Sub-Agent A's artifact directly. A low-quality or partial B
 - Introduce a "dependency-aware retry" mechanism: if Sub-Agent B reports an input validation error, the orchestrator automatically retries the *upstream* producer (Sub-Agent A) with a targeted prompt.
 - Add a "safety margin" policy: if the confidence score of an intermediate artifact is below a threshold, proactively regenerate it before downstream consumption.
 >[Back to top](#priority-summary)
+
 ### R2 
 **Single context file bottleneck**
 The Manifesto is the only context injection channel. Complex projects with separate architecture docs, API contracts, or multiple domain docs can't be expressed cleanly in one file. Users are forced to either flatten all context (losing structure) or omit it (losing accuracy). The Orchestrator also has no objective way to decide *which* Manifesto sections are relevant for each agent.
@@ -63,6 +68,7 @@ The Business Impact (1–5) and Technical Complexity (1–5) scales ship as Shop
 - See the [Reference Risk Standard](../agents/risk-evaluator-qa-strategy-agent/skills/risk-evaluator/reference/reference_risk_standard.md) file for edition with your real project information.
 - Edit the **Business Impact** and **Technical Complexity** scales with your real project information.
 >[Back to top](#priority-summary)
+
 ### R4 
 **Token budget exhaustion with silent truncation**
 The system has no pre-flight context window estimate. For a large Manifesto + long requirement + US, the LLM silently truncates context. The agent doesn't raise an error — it produces plausible-looking but incomplete output. This is a well-documented failure mode in LLM pipelines (Anthropic's own guidance on context management calls this out specifically).
@@ -70,6 +76,7 @@ The system has no pre-flight context window estimate. For a large Manifesto + lo
 **Mitigation:**
 Add a token-count pre-check at the Orchestrator before dispatching. If estimated tokens exceed a threshold (e.g., 70% of the model's context window), warn the user and abort — don't let it silently degrade.
 >[Back to top](#priority-summary)
+
 ### R5 
 **Schema validation is LLM-enforced, not deterministically enforced**
 The handoff schemas are validated by the Orchestrator (an LLM). A probabilistic model validating JSON against a schema is inherently weaker than a programmatic validator. The fixer is also an LLM — it can "repair" a JSON artifact in a way that passes structural validation but introduces semantic corruption (e.g., putting the wrong risk level in the right field).
@@ -105,6 +112,7 @@ The output path is `outputs/{RF_ID}/`. If the same RF-ID is analyzed twice (re-r
 - Was add `timestamp` for all files generated as naming convention.
 - Was defined as rule and verification check in all sub-agents to include the same `timestamp` in their outputs artifacts, e.g: `outputs/final_report_RF-001_20260717_162106.md`
 - Also the finals report artifacts include the `trace_id` and the `timestamp`, this ensure the traceability and the audit trail of the process.
+
 >[Back to top](#priority-summary)
 ### R9 
 **Context Manifesto staleness — no freshness detection**
@@ -113,6 +121,7 @@ The Manifesto is static. If the tech stack changes, a new compliance requirement
 **Mitigation:** 
 - Was add `last_updated` and `version` metadata block to the Manifesto. The Orchestrator reads this and warns (doesn't block) the user if the file hasn't been updated in more than a configurable number of days. This is a documentation-level change, not a code change.
 >[Back to top](#priority-summary)
+
 ### R10 
 **Temperature non-zero introduces non-determinism in risk INPUT classification**
 
@@ -141,6 +150,7 @@ The IEEE format validation is LLM-performed. A crafted input like `RF-001: "The 
 - If it passes, the hook rebuilds a sanitized prompt, discarding any adversarial text outside the capture groups.
 
 >[Back to top](#priority-summary)
+
 ### R13 
 **No end-to-end workflow correlation identifier**
 The `trace_id` from the hook audits hook execution. But there's no single `workflow_run_id` that links the Orchestrator, Agent A, Agent B, and all their artifacts into a single traceable execution. If a workflow fails mid-chain, diagnosis requires correlating timestamps across multiple files in different directories.
@@ -149,3 +159,21 @@ The `trace_id` from the hook audits hook execution. But there's no single `workf
 - Currently is controlede the tracebility, using an `trace_id` generated by the hook system, but this is not a `workflow_run_id` that links the Orchestrator, Agent A, Agent B, and all their artifacts into a single traceable execution.
 - Roadmap Plan: In the near term, will be implemented to generate a `workflow_run_id` (UUID4) at the Orchestrator the moment input validation succeeds. Pass it to every sub-agent invocation and embed it in every output artifact and log entry. This is the standard distributed tracing pattern (OpenTelemetry trace ID concept, applied to LLM agent chains).
 
+>[Back to Top](#priority-summary)
+
+### R14
+**Security propmt blocks**
+
+Currently the security `Hook` allow a natural user instruction to start the interaction like `Requirements Refinement Request` at the beggining of the prompt and acept as input a IEEE format `RF-[ID]: The system must [action]` and `US[as a [role] I want to [goal] so that [reason]]`. 
+This is applied as Prompt Injection Protection, stripping extraneous adversarial instructions (e.g., `"SYSTEM: ignore previous instructions"`) before passing the sanitized prompt to the Orchestrator.
+
+**Acepted:** 
+
+The current security prompt block is not robust enough and can be bypassed by a crafted prompt. Despite this the current setup accepts these risks because the system is agnostic and highly generalized, there are numerous ways to perform validations as objectively as possible. Consequently, the risk of potential prompt injection is accepted, even with the existing protection layer, and is further mitigated by a second layer involving LLM constraints defined within the system prompt.
+
+**Mitigation Recommendations:**
+It is recommended to use an exact instruction format to avoid unexpected blocks, as fallow: 
+
+`Run RF-[ID]: The system must [action]. US[as a [role] I want to [goal] so that [reason]].`
+
+Apply security gates tailored to each project context and its specific compliance requirements.

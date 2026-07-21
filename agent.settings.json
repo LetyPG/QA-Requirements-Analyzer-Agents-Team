@@ -2,7 +2,7 @@
     "hooks": {
         "PreToolUse": [
             {
-                "matcher": "Bash|Read|Cat|Write|Edit",
+                "matcher": "Bash|Read|Cat|Write|Edit|Grep",
                 "hooks": [
                     {
                         "type": "command",

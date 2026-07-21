@@ -51,8 +51,8 @@
           "items": {
             "type": "string"
           },
-          "minItems": 5,
-          "description": "2. Acceptance Criteria (BDD): MUST contain at least 5 BDD scenarios written in strict Gherkin format.",
+          "minItems": 11,
+          "description": "2. Acceptance Criteria (BDD): MUST contain at least 11 BDD scenarios written in strict Gherkin format.",
           "validation_refinement_questions": {
             "type": "array",
             "items": {

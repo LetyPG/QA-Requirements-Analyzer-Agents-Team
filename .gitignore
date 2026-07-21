@@ -15,3 +15,12 @@ ui/
 
 #tests
 .pytest_cache/
+
+# solutions/outputs
+outputs/
+
+# validation artifact
+artifacts/
+
+# temp artifacts
+tmp/

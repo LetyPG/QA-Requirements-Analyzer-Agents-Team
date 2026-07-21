@@ -239,7 +239,7 @@ def _check_prompt_injection(prompt: str) -> Tuple[Optional[str], Optional[dict]]
 
     # Option executed: Structural Boundary Regex (Universally supports all languages)
     pattern = re.compile(
-        r"^(RF-[a-zA-Z0-9\-]+):\s*(.*?)\.?\s*US\[(.*?)\]\.?$",
+        r"^(?:Run\s+)?(RF-[a-zA-Z0-9\-]+):\s*(.*?)\.?\s*(?:US\[|User Story:\s*)(.*?)(?:\])?\.?$",
         re.IGNORECASE | re.DOTALL
     )
     
@@ -247,7 +247,7 @@ def _check_prompt_injection(prompt: str) -> Tuple[Optional[str], Optional[dict]]
     if not match:
         return (
             "Prompt Injection Protection: Input does not strictly adhere to the expected IEEE format or contains extraneous content. "
-            "Format required: RF-[ID]: [action]. US[[user story]].",
+            "Format required: Run RF-[ID]: [action]. US[[user story]] OR User Story: [user story].",
             None
         )
         

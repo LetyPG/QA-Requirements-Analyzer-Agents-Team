@@ -152,39 +152,28 @@ source .venv/bin/activate
 
 ### **Test Execution Commands**
 
-**Run the full suite (all 48 tests):**
+To run the test suite:
 ```bash
-python -m pytest tests/ -v
+# Run all tests
+python -m pytest tests/
+# Run unit tests
+python -m pytest tests/test_security.py tests/test_language.py
+# Run integration tests
+python -m pytest tests/test_integration.py
 ```
-
-**Run security unit tests only:**
-```bash
-python -m pytest tests/test_security.py -v
-```
-
-**Run language unit tests only:**
-```bash
-python -m pytest tests/test_language.py -v
-```
-
-**Run integration tests only:**
-```bash
-python -m pytest tests/test_integration.py -v
-```
-
-**Run with short traceback (CI-friendly):**
-```bash
-python -m pytest tests/ --tb=short
-```
+> If you do not use the virtual environment, you must install the dependencies:
+> ```bash
+> pip install -r requirements.txt
+> ```
 
 **Test Count Summary**
 
 | File | Type | Tests | Scope |
 |---|---|---|---|
-| `test_security.py` | Unit | 26 | Contract data structures + security gate functions |
+| `test_security.py` | Unit | 32 | Contract data structures + security gate functions |
 | `test_language.py` | Unit | 14 | Language detection + result builder |
-| `test_integration.py` | Integration | 8 | Hook subprocess stdin → stdout |
-| **Total** | | **48** | |
+| `test_integration.py` | Integration | 9| Hook subprocess stdin → stdout |
+| **Total** | | **55** | |
 
 > [Back to Top](#quick-link-reference)
 

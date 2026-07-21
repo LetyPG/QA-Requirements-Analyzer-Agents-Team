@@ -20,6 +20,7 @@ The hooks act as a **Fail-Closed Security Layer**:
    - Autonomously detects the user's language without relying on token-intensive LLM classification.
    - Enforces consistent language usage in the generated outputs.
 3. **Prompt Injection Protection (R12 Mitigation):**
+   - Allow a natural user instruction to start the interaction like `Run` followed of the input artifacts ( RF, and US), and at the end cannot be added any other instruction. Any intrsuction out of this boundaries is considered as an injection and cause the block of the request. This ensures the integrity of the system instructions.  
    - Applies strict Regex to the user input to enforce the IEEE format: `RF-[ID]: The system must [action]. US[as a [role] I want to [goal] so that [reason]].`
    - Strips extraneous adversarial instructions (e.g., `"SYSTEM: ignore previous instructions"`) before passing the sanitized prompt to the Orchestrator.
 
@@ -32,6 +33,13 @@ All hook logic is backed by a robust test suite covering both structural (unit) 
 
 To run the test suite:
 ```bash
+# Testing setup and virtual environment activation
 cd hooks/
-pytest tests/
+source .venv/bin/activate
+# Run the tests
+python -m pytest tests/
+# Run unit tests
+python -m pytest tests/test_security.py tests/test_language.py
+# Run integration tests
+python -m pytest tests/test_integration.py
 ```
