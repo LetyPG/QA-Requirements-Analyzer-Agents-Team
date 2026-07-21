@@ -20,7 +20,9 @@ ui/
 outputs/
 
 # validation artifact
-artifacts/
+logs/
+validation-report/
 
 # temp artifacts
 tmp/
+
