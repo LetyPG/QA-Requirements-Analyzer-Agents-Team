@@ -105,7 +105,6 @@ You will generate 2 Output Artifacts:
 
 |**Type**| **Rule**|
 | --- | --- |
-
 | **Must** |**Contract Compliance**: Validate contract compliance of the previous skill `risk-evaluator`, you must validate that in the body payload are included the next keys and values: `risk_metadata`, `justification`. |
 | **Must** | **Data Mapping Preservation**: Inject into the final JSON payload, the exact `risk_metadata` and `justification` objects (which include `business_impact` and `technical_debt_risk`) passed from Skill 1 without modification or omission.| 
 | **Must** | follow strictly the reference `reference/qa_strategy_standards.md` to perform the test strategy process. |

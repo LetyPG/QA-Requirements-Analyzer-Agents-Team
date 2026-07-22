@@ -81,12 +81,16 @@ If Agent A detects one of these NFRs, the corresponding test type must be includ
 
 ## 3. Automation Criteria
 
-A functionality is **Automation Candidate: True** if:
+A functionality is considered an **Automation Candidate: True** when at least one of the following conditions is met:
 
-* The risk is >= 3.5 (High/Critical).
-* Or if it is a recurrent regression flow defined in the Manifesto.
+- It has a **High or Critical risk score (Risk ≥ 3.5)**, indicating that failures could significantly impact business operations, security, compliance, or user experience.
+- It belongs to a **recurrent regression flow** defined in the Project Context Manifesto, where repeated execution makes automation more cost-effective than manual validation.
+
+> You can apply the next heuristic to determine if a functionality is an automation candidate: `Automation_Candidate = (Risk_Score >= 3.5) OR (Recurrent_Regression_Flow == True)`
+
+This recommendation follows **risk-based testing** and **test automation best practices** by prioritizing automation for scenarios that maximize defect prevention, regression coverage, execution efficiency, and return on automation investment (ROI).
 
 **Rationale:**
 
-
+Automation candidates are identified based on risk exposure and execution frequency. High-risk functionality has a greater business impact if defects escape to later SDLC stages or production, making automated regression tests an effective mechanism for reducing release risk. Likewise, recurrent regression flows benefit from automation because they are executed repeatedly across development iterations, where automation improves execution efficiency, consistency, and long-term maintenance costs. This strategy prioritizes automation where it delivers the greatest value in terms of quality assurance, risk mitigation, and testing effort optimization.
 

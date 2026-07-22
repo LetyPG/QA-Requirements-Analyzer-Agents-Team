@@ -2,13 +2,16 @@
 
 This files contains detailed technical information about the framework design and implementation.
 
-- [Principles and Philosophy](#principles-and-philosophy)
-- [Fixing Loop Strategy](#fixing-loop-strategy)
-- [Hook Layer](#hook-layer)
-- [Solutions Identified Risks](#solutions-identified-risks)
-- [Roadmap](#roadmap)
+## Index
+| Index | Description|
+|------|-----|
+|[Principles and Philosophy](#principles-and-philosophy)| Definition of the framework philosophy and principles|
+|[Fixing Loop Strategy](#fixing-loop-strategy)| The fixing loop strategy |
+|[Hook Layer](#hook-layer)| The deterministic pre-tool hook for security deterministic  governace, attack prevention, token economy strategy base on context file size limit, and language detection for better user experience |
+|[Roadmap](#roadmap)| Roadmap for future versions, features and solution enhancements  |
 
 ---
+
 ## Principles and Philosophy
 
 | Principle | Description |
@@ -23,7 +26,7 @@ This files contains detailed technical information about the framework design an
 |**Cross-Model AI Compatibility**| The framework is designed to be compatible with various AI models, including Claude, GPT, Llama, Mistral, and Gemini. This flexibility allows the framework to be used with different models depending on the user's preference and availability.|
 |**Language Agnostic**| The framework is designed to be used with different languages, including English, Spanish, French, German, and Italian. This flexibility allows the framework to be used with different languages depending on the user's preference and availability. Althout the framework use English as processing language, to reduce token consumption, and fallows internationalization standards, it can generate the deliverables in the language of the user request.|
 
->[Back to Top](#quick-link-reference)
+>[Back to Top](#index)
 ---
 
 ## Fixing Loop Strategy
@@ -46,7 +49,7 @@ The Fixing Loop is an iterative correction mechanism triggered by the Orchestrat
   - The `artifacts/logs/` sub folder will containg the runtine logs in case the fixing loop will excced the max number of retries.
  and the fix will be done by the user manually or need external responsabilities. 
 
->[Back to Top](#quick-link-reference)
+>[Back to Top](#index)
 ---
 
 ## Hook Layer
@@ -116,7 +119,7 @@ The Hook Contract is a JSON schema that defines the data structures that:
 | `block_reason` |string|Human-readable explanation of why the request was denied.|
     """
 
->[Back to Top](#quick-link-reference)
+>[Back to Top](#index)
 
 ### Hook Architecture 
 
@@ -173,6 +176,7 @@ To override this for a specific project, add the following to `agent.settings.js
   }
 }
 ```
+>[Back to Top](#index)
 
 #### File size limit
 
@@ -219,6 +223,8 @@ The hook detects the user's input language **offline** using `lingua-language-de
 
 To add a new language, extend `LANGUAGE_RULES` in `hooks/security_language.py` and add the corresponding `Language` enum to the `target_languages` list in `_detect_language()`.
 
+>[Back to Top](#index)
+
 #### Prompt Injection Extraction
 
 The hook enforces a deterministic Prompt Injection security gate using a **Structural Boundary Regex**.
@@ -261,11 +267,7 @@ brew install libmagic             # macOS
 |**Auditability**|trace_id on every invocation links hook execution to generated artifacts.|
 |**DRY**|Language rule generated once by hook, passed to all sub-agents via structured context.|
 
-
----
-
-## Solutions Identified Risks
-
+>[Back to top](#index)
 ---
 
 ## Roadmap
@@ -283,5 +285,15 @@ brew install libmagic             # macOS
 A dedicated framework capability to measure the deterministic quality of the agents' outputs over time. This evaluation feature will benchmark generated artifacts (BDD scenarios, risk matrices, and NFR extractions) against a curated dataset of known-good requirements ("Golden Path"). 
 For more details see [Skill Test Strategy-Roadmap](docs/qa_criteria_test_components_strategies.md)
 
+### 3. Automation strategy
 
->[Back to Top](#quick-link-reference)
+Currently the system recomend an scenario to automation if  the risk were clasified as high or critical risk with score above or equal to 3.5, or it is a regression scenario.
+For future versions the automation recomendation rule will be slightly more extensible for future versions. Instead of hard-coding only two conditions, this will be configured as **automation drivers**:
+
+* **Risk Driver** – High business or technical risk (Risk ≥ 3.5).
+* **Regression Driver** – Frequently executed regression scenario.
+* **Execution Frequency Driver** *(future)* – High execution volume (e.g., every sprint or every release).
+* **Business Criticality Driver** *(future)* – Core user journeys or revenue-critical workflows.
+* **Stability Driver** *(future)* – Functionality is sufficiently stable to provide sustainable automation value.
+
+>[Back to Top](#index)

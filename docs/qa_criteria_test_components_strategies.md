@@ -1,17 +1,25 @@
 # Quick link Reference
 
-- [QA Criteria: Validation and Verification Strategy](#qa-criteria-validation-and-verification-strategy)
-- [Component Test Strategy](#component-test-strategy)
-- [Test Runner Guide](#test-runner-guide)
-- [Skill Test Strategy-Roadmap](#skill-test-strategy-roadmap)
+This document describes the testing strategies for the QA Criteria Validation and Verification components of the Requirements Analyzer agents. It includes details on the hook layer, the validation and verification strategy, the test runner guide, and the skill test strategy-roadmap.
+
+## INDEX 
+
+|Index | Description|
+|---|---|
+| [QA Criteria: Validation and Verification Strategy](#qa-criteria-validation-and-verification-strategy) | The 5 layer validation strategy on this framework |
+| [Component Test Strategy](#component-test-strategy) | The hook layer is the only deterministic Python component in this framework. Its test suite validates that security and language logic behave correctly before any LLM reasoning takes place. Failures here have the highest impact: a missed block or a wrong language rule propagates silently into all downstream agent outputs.|
+| [Test Runner Guide](#test-runner-guide) | how to run all the components tests |
+| [Skill Test Strategy-Roadmap](#skill-test-strategy-roadmap) | Describe the next auto validation feature of the framework as roadmap, which is the external validation engine for the skills using *LLMs Models Judge* and `evals`. |
 
 
 ## QA Criteria: Validation and Verification Strategy
 
-The validation strategy on this framework includes 4 different layers:
+The main goal of this framework is to guarantee the quality of the requirements  refinement process, for that reason the framework use the principle of **"Quality Before Process"**, this means that the framework itself applies its own validation criteria to its components and workflows to guarantee its proper functioning and ensure the system reliability and requirements quality outcomes.
+
+The validation strategy on this framework includes 5 different layers:
 
 1. Hook Layer Validations (Security and Language Detection Agent PreToolUse)
-2. Self validations (every component : agents and skills validates the task completetion and qa criteria acomplishment)
+2. Self validations (every component : agents and skills validates the task completion and qa criteria accomplishment)
 3. Artifact validation (orchestrator qa gates in input and output artifacts)
 4. Risk analysis completeness validation (high impact on solution usabillity goals)
 5. Internal agents validation failure (bidireccional)
@@ -41,7 +49,7 @@ graph TD
    E --Orchestrator trigger assess failure--> G
 ```
 
->[Back to Top](#quick-link-reference)
+>[Back to Top](#index)
 
 ---
 
@@ -66,6 +74,8 @@ hooks/tests/
 - Unit tests call internal functions directly. No subprocess. No real filesystem I/O (mocked where needed).
 - Integration tests treat the hook as a black box: JSON in via stdin, JSON out via stdout. No internal functions are referenced.
 
+>[Back to Top](#index)
+
 ---
 
 ### Test File Responsibilities and Validation Criteria
@@ -87,7 +97,7 @@ hooks/tests/
 - `trace_id` on every block result must be a well-formed UUID4 string.
 - No real filesystem access occurs (patched via `unittest.mock`).
 
----
+>[Back to Top](#index)
 
 #### `test_language.py` — Language Detection Unit Tests
 
@@ -103,6 +113,7 @@ hooks/tests/
 - When confidence falls below 0.75, fallback language must be English and the raw score must be preserved in the result for diagnostics.
 - No subprocess is spawned. External library (`lingua`) is used directly or mocked for edge cases.
 
+>[Back to Top](#index)
 ---
 
 #### `test_integration.py` — Hook Process Integration Tests
@@ -128,6 +139,7 @@ Each test spawns the hook as a subprocess, passes JSON on stdin, and asserts on 
 - Blocked requests must return `execute_workflow=false` — never silently allow a dangerous file type.
 - The hook must not crash on empty, malformed, or unexpected stdin.
 
+>[Back to Top](#index)
 ---
 
 ## Test Runner Guide
@@ -175,7 +187,7 @@ python -m pytest tests/test_integration.py
 | `test_integration.py` | Integration | 9| Hook subprocess stdin → stdout |
 | **Total** | | **55** | |
 
-> [Back to Top](#quick-link-reference)
+> [Back to Top](#index)
 
 ## Skill Test Strategy Roadmap
 
@@ -192,4 +204,4 @@ Introduction of a new specialized agent that acts as an independent auditor, it 
 - **Audit & Validate:** Continuously review the outputs produced by the Orchestrator and other sub-agents to detect subtle hallucinations, logical inconsistencies, or deviations from industry standards (ISTQB, IEEE) that basic schema validation might miss.
 - **Skill Improvement:** Provide continuous feedback to the agent prompt structures, essentially acting as an automated "Agent Trainer." It will suggest prompt refinements, updated compliance references, or adjustments to validation rules to improve the overall team's skills iteratively.
 
->[Back to Top](#quick-link-reference)
+>[Back to Top](#index)

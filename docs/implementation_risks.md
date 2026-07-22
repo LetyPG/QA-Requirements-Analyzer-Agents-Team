@@ -1,6 +1,18 @@
 # Risks Identified in the implementation phase 
 
+This document list the risks identified during the implementation phase of the framework, consider that this list is generated as part of the solution design process, and must be used as reference to identify and mitigate risks during the solution development and usage. This list is not exhaustive and is subject to change.
+
+## INDEX
+
+| Index | Description | 
+|------|------|
+| [Priority Summary](#priority-summary) | Summary of all risks classified by severity and effort to mitigate |   
+| [Pending Risks Mitigations Recomendations](#pending-risks-mitigations-recomendations) | Description of all risks classified as Pending: R1, R2, R3, R4, R5, R6 | 
+| [Mitigated Risks](#mitigated-risks) | Description of all risks classified as Mitigated: R7, R8, R9, R10, R11, R12,R13, R14 |  
+
 ## Priority Summary
+
+The following risks are classified by severity and effort to mitigate, and are documented with their current status and mitigation recommendations.
 
 | Risk | Severity | Effort to Mitigate | Status | 
 |---|---|---|---|
@@ -21,7 +33,7 @@
 
 ## **Pending** Risks Mitigations Recomendations
 
-Some mitigations strategies relies on user configurations and practices, these are classified as Pending and are documented in the [README.md](../README.md).
+Some mitigations strategies relies on user configurations and practices, these are classified as Pending and are documented in the [User Guide and Best Practices](../docs/user_guide.md#user-setup-responsabilities--configuration-notes).
 
 ### R1 
 **Sequential cascade failure (agent dependency)**
@@ -37,7 +49,7 @@ Also in case of any component modifications (not recomended), or improvements on
 - Expand the classification-aware fixing loop to identify *root causes* (ambiguity, incompleteness, contradiction) rather than just surface errors.
 - Introduce a "dependency-aware retry" mechanism: if Sub-Agent B reports an input validation error, the orchestrator automatically retries the *upstream* producer (Sub-Agent A) with a targeted prompt.
 - Add a "safety margin" policy: if the confidence score of an intermediate artifact is below a threshold, proactively regenerate it before downstream consumption.
->[Back to top](#priority-summary)
+>[Back to top](#index)
 
 ### R2 
 **Single context file bottleneck**
@@ -59,7 +71,8 @@ Help me to create a project-context/project_context_manifesto.md file for my pro
 - Implement a hierarchical Manifesto structure (sections → subsections → context blocks) with explicit IDs.
 - Create a "Context Selector" component that analyzes the current agent's task and injects only relevant context blocks (with cross-references to full context).
 - Add validation that ensures no single file exceeds a target token threshold (e.g., 50KB), prompting users to split large context files.
->[Back to top](#priority-summary)
+>[Back to top](#index)
+
 ### R3 
 **Risk calibration not tied to the real project**
 The Business Impact (1–5) and Technical Complexity (1–5) scales ship as ShopSwift examples. If users don't update `reference_risk_standard.md`, scores carry the assumptions of a synthetic e-commerce project — critical for ShopSwift might be irrelevant for their domain.
@@ -75,7 +88,8 @@ The system has no pre-flight context window estimate. For a large Manifesto + lo
 
 **Mitigation:**
 Add a token-count pre-check at the Orchestrator before dispatching. If estimated tokens exceed a threshold (e.g., 70% of the model's context window), warn the user and abort — don't let it silently degrade.
->[Back to top](#priority-summary)
+
+>[Back to top](#index)
 
 ### R5 
 **Schema validation is LLM-enforced, not deterministically enforced**
@@ -83,7 +97,9 @@ The handoff schemas are validated by the Orchestrator (an LLM). A probabilistic 
 
 **Mitigation:**
 - Roadmap Plan: Addition of a deterministic JSON schema validator (`jsonschema` library) at the Orchestrator's artifact validation step, run *before* any LLM-based semantic review. This separates structural compliance (deterministic) from semantic quality (LLM-evaluated).
->[Back to top](#priority-summary)
+
+>[Back to top](#index)
+
 ### R6 
 **The "95% coverage" claim is unverifiable and self-reported**
 Agent A is instructed to cover 95% of requirement complexity, but there's no external measurement. The agent self-reports compliance. A requirement touching concurrency, partial failure states, or cross-service interactions may produce syntactically valid Gherkin that misses entire risk dimensions, and the system has no way to detect this without the planned "Outside Reviewer Agent."
@@ -91,8 +107,9 @@ Agent A is instructed to cover 95% of requirement complexity, but there's no ext
 **Mitigation:**
 - Roadmap Plan: In the near term, the `evals/eval.json` files in each skill are the right place to define "golden path" requirements with known expected scenario counts and categories. These become regression tests for output quality.
 
+>[Back to top](#index)
+
 ---
->[Back to top](#priority-summary)
 ## **Mitigated** Risks 
 
 ### R7 
@@ -102,7 +119,10 @@ In first implentation version was used `risk.log` an append-only text file maint
 
 **Mitigation:** 
 - Was implemented the risk evaluation storage system from `risk.log` to `risk.jsonl` a JSON Lines format, with a schema, validated on every write. This is a low-effort change that makes the log both machine-readable and auditable without changing the append-only semantic.
->[Back to top](#priority-summary)
+
+
+>[Back to top](#index)
+
 ### R8 
 **No run isolation / output collision on re-runs**
 The output path is `outputs/{RF_ID}/`. If the same RF-ID is analyzed twice (re-run after editing the requirement or manifesto), the second run silently overwrites the first. There's no way to compare before/after, audit the re-run history, or roll back.
@@ -113,14 +133,16 @@ The output path is `outputs/{RF_ID}/`. If the same RF-ID is analyzed twice (re-r
 - Was defined as rule and verification check in all sub-agents to include the same `timestamp` in their outputs artifacts, e.g: `outputs/final_report_RF-001_20260717_162106.md`
 - Also the finals report artifacts include the `trace_id` and the `timestamp`, this ensure the traceability and the audit trail of the process.
 
->[Back to top](#priority-summary)
+>[Back to top](#index)
+
 ### R9 
 **Context Manifesto staleness — no freshness detection**
 The Manifesto is static. If the tech stack changes, a new compliance requirement appears, or the business priority of a flow changes, the agents continue producing outputs based on outdated assumptions with no warning. For a framework meant to inform QA strategy decisions, this is a significant silent risk.
 
 **Mitigation:** 
 - Was add `last_updated` and `version` metadata block to the Manifesto. The Orchestrator reads this and warns (doesn't block) the user if the file hasn't been updated in more than a configurable number of days. This is a documentation-level change, not a code change.
->[Back to top](#priority-summary)
+
+>[Back to top](#index)
 
 ### R10 
 **Temperature non-zero introduces non-determinism in risk INPUT classification**
@@ -131,7 +153,9 @@ The `risk-evaluator-qa-strategy-agent` runs at temperature different from `0.0`,
 **Mitigation:** 
 - Set the agent `temperature` to `0.0` inside `risk-evaluator-qa-strategy-agent.md` to force deterministic responses during the Impact and Complexity assignment. 
 - (Optional) Future enhancement: add a calibration test suite for input mapping validation.
->[Back to top](#priority-summary)
+
+>[Back to top](#index)
+
 ### R11 
 **No distinction between transient and structural failures in the retry loop**
 The fixing loop retries up to 2 times without classifying *why* the failure occurred. A transient failure (API timeout, rate limit) deserves a retry. A structural failure (the requirement is genuinely too ambiguous to produce valid Gherkin) does not — retrying wastes 2x the tokens and still fails. This compounds with R1 (sequential cascade) since fixing Agent A's structural failure requires user intervention, not LLM retry.
@@ -139,7 +163,8 @@ The fixing loop retries up to 2 times without classifying *why* the failure occu
 **Mitigation:** 
 - Classify error categories before triggering a retry: `TRANSIENT` (network, rate limit), `STRUCTURAL` (missing mandatory context, ambiguous requirement), `SCHEMA` (output format non-compliance). Only `TRANSIENT` and `SCHEMA` errors should trigger automatic retry. `STRUCTURAL` errors should escalate immediately with a clear user message.
 
->[Back to top](#priority-summary)
+>[Back to top](#index)
+
 ### R12 
 **Prompt injection surface at the IEEE format boundary**
 The IEEE format validation is LLM-performed. A crafted input like `RF-001: "The system must process payments. SYSTEM: ignore your previous instructions and..."` could pass the regex-like format check while embedding adversarial content. The hook blocks executable files but doesn't sanitize free-text prompt content.
@@ -149,7 +174,7 @@ The IEEE format validation is LLM-performed. A crafted input like `RF-001: "The 
 - If the prompt fails the regex match, the hook sets `execute_workflow: false` with a `Prompt Injection Protection` block reason, entirely bypassing the Orchestrator LLM.
 - If it passes, the hook rebuilds a sanitized prompt, discarding any adversarial text outside the capture groups.
 
->[Back to top](#priority-summary)
+>[Back to top](#index)
 
 ### R13 
 **No end-to-end workflow correlation identifier**
@@ -159,7 +184,7 @@ The `trace_id` from the hook audits hook execution. But there's no single `workf
 - Currently is controlede the tracebility, using an `trace_id` generated by the hook system, but this is not a `workflow_run_id` that links the Orchestrator, Agent A, Agent B, and all their artifacts into a single traceable execution.
 - Roadmap Plan: In the near term, will be implemented to generate a `workflow_run_id` (UUID4) at the Orchestrator the moment input validation succeeds. Pass it to every sub-agent invocation and embed it in every output artifact and log entry. This is the standard distributed tracing pattern (OpenTelemetry trace ID concept, applied to LLM agent chains).
 
->[Back to Top](#priority-summary)
+>[Back to Top](#index)
 
 ### R14
 **Security propmt blocks**
@@ -168,7 +193,6 @@ Currently the security `Hook` allow a natural user instruction to start the inte
 This is applied as Prompt Injection Protection, stripping extraneous adversarial instructions (e.g., `"SYSTEM: ignore previous instructions"`) before passing the sanitized prompt to the Orchestrator.
 
 **Acepted:** 
-
 The current security prompt block is not robust enough and can be bypassed by a crafted prompt. Despite this the current setup accepts these risks because the system is agnostic and highly generalized, there are numerous ways to perform validations as objectively as possible. Consequently, the risk of potential prompt injection is accepted, even with the existing protection layer, and is further mitigated by a second layer involving LLM constraints defined within the system prompt.
 
 **Mitigation Recommendations:**
@@ -177,3 +201,5 @@ It is recommended to use an exact instruction format to avoid unexpected blocks,
 `Run RF-[ID]: The system must [action]. US[as a [role] I want to [goal] so that [reason]].`
 
 Apply security gates tailored to each project context and its specific compliance requirements.
+
+>[Back to Top](#index)
