@@ -2,7 +2,7 @@ specs/
 .venv/
 __pycache__/
 ui/.venv/
-hooks/.venv/
+
 
 
 
