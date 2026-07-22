@@ -3,7 +3,10 @@ from __future__ import annotations
 import json
 import os
 import subprocess
+import sys
 from pathlib import Path
+
+import pytest
 
 # ---------------------------------------------------------------------------
 # Paths — resolved relative to this file so tests are portable
@@ -11,7 +14,10 @@ from pathlib import Path
 
 _PROJECT_ROOT = str(Path(__file__).resolve().parents[2])
 _HOOK_SCRIPT  = Path(__file__).resolve().parents[2] / "hooks" / "security_language.py"
-_VENV_PYTHON  = Path(__file__).resolve().parents[2] / "hooks" / ".venv" / "bin" / "python3"
+# Use the active interpreter so tests work both locally (inside .venv) and in CI
+# (where no .venv exists inside hooks/).  When the venv is active locally,
+# sys.executable already points to hooks/.venv/bin/python3.
+_VENV_PYTHON  = Path(sys.executable)
 
 
 # ---------------------------------------------------------------------------
@@ -59,6 +65,7 @@ def _run_hook_raw(stdin_text: str) -> subprocess.CompletedProcess:
 # Integration tests — hook as a black-box subprocess
 # ===========================================================================
 
+@pytest.mark.integration
 class TestMainIntegration:
     """
     Each test simulates a PreToolUse invocation exactly as the agent runtime

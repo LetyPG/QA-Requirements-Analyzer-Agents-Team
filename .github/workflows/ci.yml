@@ -1,0 +1,53 @@
+name: CI
+
+on:
+  push:
+    branches: ["main"]
+  pull_request:
+    branches: ["main"]
+
+jobs:
+  lint-and-test:
+    name: Lint → Unit Tests → Integration Tests
+    runs-on: ubuntu-latest
+
+    steps:
+      # ── 1. Checkout ────────────────────────────────────────────────────────
+      - name: Checkout code
+        uses: actions/checkout@v4
+
+      # ── 2. Build — Python + pip cache ─────────────────────────────────────
+      - name: Set up Python 3.11
+        uses: actions/setup-python@v5
+        with:
+          python-version: "3.11"
+          cache: "pip"
+          cache-dependency-path: hooks/requirements.txt
+
+      # python-magic requires libmagic1 on Ubuntu runners
+      - name: Install system dependency (libmagic1)
+        run: sudo apt-get install -y libmagic1
+
+      - name: Install Python dependencies
+        run: pip install -r requirements.txt ruff
+        working-directory: ./hooks
+
+      # ── 3. Lint — Ruff (< 1s) ─────────────────────────────────────────────
+      - name: Lint with Ruff
+        run: ruff check hooks/
+
+      # ── 4. Unit Tests ──────────────────────────────────────────────────────
+      - name: Run Unit Tests
+        run: |
+          pytest hooks/tests/ -m "not integration" \
+            -v --tb=short
+        env:
+          PYTHONPATH: ${{ github.workspace }}
+
+      # ── 5. Integration Tests ───────────────────────────────────────────────
+      - name: Run Integration Tests
+        run: |
+          pytest hooks/tests/test_integration.py \
+            -v --tb=short
+        env:
+          PYTHONPATH: ${{ github.workspace }}
