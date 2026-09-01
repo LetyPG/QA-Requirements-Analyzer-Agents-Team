@@ -1,0 +1,1 @@
+# tests/skills/__init__.py as a Python package for pytest discovery

@@ -8,7 +8,7 @@ on:
 
 jobs:
   lint-and-test:
-    name: Lint → Unit Tests → Integration Tests
+    name: Lint - Unit Tests - Integration Tests
     runs-on: ubuntu-latest
 
     steps:
@@ -32,21 +32,29 @@ jobs:
         run: pip install -r requirements.txt ruff
 
       # ── 3. Lint — Ruff (< 1s) ─────────────────────────────────────────────
-      - name: Lint with Ruff
-        run: ruff check hooks/
-
-      # ── 4. Unit Tests ──────────────────────────────────────────────────────
-      - name: Run Unit Tests
-        run: |
-          pytest hooks/tests/ -m "not integration" \
-            -v --tb=short
+      - name: Lint with Ruff for hooks and tests
+        run: ruff check hooks/ tests/
         env:
           PYTHONPATH: ${{ github.workspace }}
 
-      # ── 5. Integration Tests ───────────────────────────────────────────────
-      - name: Run Integration Tests
+      # ── 4. Unit Tests for hooks ───────────────────────────────────────────
+      - name: Run Unit Tests for hooks
         run: |
-          pytest hooks/tests/test_integration.py \
+          pytest tests/hooks/ -m "not integration" -v --tb=short
+        env:
+          PYTHONPATH: ${{ github.workspace }}
+
+      # ── 5. Unit Tests for skills risk evaluator ──────────────────────────────────────────
+      - name: Run Unit Tests for skills
+        run: |
+          pytest tests/skills/test_risk_calculator.py -v --tb=short
+        env:
+          PYTHONPATH: ${{ github.workspace }}
+
+      # ── 6. Integration Tests for hooks ───────────────────────────────────
+      - name: Run Integration Tests for hooks
+        run: |
+          pytest tests/hooks/test_integration.py \
             -v --tb=short
         env:
           PYTHONPATH: ${{ github.workspace }}

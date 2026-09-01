@@ -1,0 +1,42 @@
+{
+    "skill_name": "context-manifesto-user-guidance",
+    "evals": [
+        {
+            "id": "01-HP",
+            "description": "Happy Path - The project_context_manifesto.md file is absent from ./project-context/. The orchestrator detects the absence and triggers this skill. The skill must produce a complete, structured user guidance message covering all 4 stages (explanation, categories, template, enterprise suggestion) and pass its own self-validation checklist.",
+            "prompt": "The orchestrator has completed input validation for the following user request: 'Run RF-101: The system must allow registered users to reset their forgotten password. US[As a registered user, I want to reset my forgotten password so that I can regain access to my account].' During validation, the orchestrator detected that the file project_context_manifesto.md is NOT present in the ./project-context/ folder. Trigger the context-manifest-guidance skill and provide the user with full guidance to create the missing file.",
+            "expected_output": "A complete, readable user guidance message in the language of the user's input (English) that: (1) explicitly announces detection of the missing project_context_manifesto.md, (2) explains why the file is mandatory for the refinement pipeline, (3) states the exact required file location and naming convention (./project-context/project_context_manifesto.md), (4) lists all 8 required context categories with a brief explanation of why each matters, (5) provides the full recommended Markdown template structure (with all 8 sections), and (6) optionally mentions the enterprise Context Builder Agent improvement. The skill must NOT generate the manifesto file itself and must NOT modify any orchestrator configuration.",
+            "files": [],
+            "assertions": [
+                "The response is a user-facing guidance message and NOT a generated project_context_manifesto.md file",
+                "The message explicitly states that project_context_manifesto.md was not found or is missing",
+                "The message includes the exact required file path: ./project-context/project_context_manifesto.md",
+                "The message explains that the file is mandatory because the refinement pipeline derives BDD scenarios, NFRs, and risk analysis from project context",
+                "The message lists all 8 required context categories: Metadata (Staleness Check), System Overview, Technical Architecture, Core Business Flows, Security Baselines, Performance Expectations, Compliance Requirements, and Accessibility/UX Standards",
+                "The message includes the recommended Markdown template structure containing at least sections 1 through 8 (System Overview through QA & Compliance Baselines)",
+                "The template included in the message contains a YAML front-matter block with 'version' and 'last_updated' fields",
+                "The enterprise-scale Context Builder Agent improvement is mentioned as an optional future recommendation, not as a mandatory step",
+                "The message does NOT claim to have generated or written the manifesto file automatically",
+                "The message does NOT instruct the user to modify orchestrator configuration files",
+                "The message ends with an explicit instruction telling the user to create the file and then re-trigger the requirements refinement process"
+            ]
+        },
+        {
+            "id": "02-NC",
+            "description": "Negative Case - The project_context_manifesto.md file already exists in ./project-context/ and is non-empty. The skill must NOT be triggered, and no guidance message should be produced. The orchestrator must proceed directly to the requirements refinement workflow without invoking context-manifest-guidance.",
+            "prompt": "The orchestrator has completed input validation for the following user request: 'Run RF-202: The system must send an email notification when a new invoice is generated. US[As a billing manager, I want to receive an email notification when a new invoice is generated so that I can review and approve it promptly].' During validation, the orchestrator detected that the file project_context_manifesto.md IS present and non-empty in the ./project-context/ folder. Determine whether the context-manifest-guidance skill should be triggered.",
+            "expected_output": "The context-manifest-guidance skill is NOT invoked. The orchestrator proceeds directly to the requirements refinement pipeline (BDD scenario generation and risk evaluation) without producing any guidance message about the missing manifest. No user-facing guidance message about creating project_context_manifesto.md is generated.",
+            "files": [
+                "evals/files/negative_case/project-context/project_context_manifesto.md"
+            ],
+            "assertions": [
+                "The context-manifest-guidance skill is NOT triggered (no guidance message about the missing manifest is produced)",
+                "The response does NOT contain any message instructing the user to create a project_context_manifesto.md file",
+                "The response does NOT list the 8 context categories as a creation checklist",
+                "The response does NOT include the recommended Markdown template structure for the manifesto",
+                "The orchestrator acknowledges the valid presence of project_context_manifesto.md and continues the refinement workflow for RF-202",
+                "No false-positive detection of a missing manifest occurs when the file is present and non-empty"
+            ]
+        }
+    ]
+}

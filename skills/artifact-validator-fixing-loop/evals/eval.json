@@ -1,0 +1,58 @@
+{
+    "skill_name": "artifact-validator-fixing-loop",
+    "evals": [
+        {
+            "id": "01-HP",
+            "description": "Happy Path - All sub-agent artifacts are complete, schema-compliant, and the OWASP Risk ID is valid. The skill must produce a success validation report and proceed to User Deliverable Generation without triggering the Fixing Loop.",
+            "prompt": "The risk-evaluator-qa-strategy-agent has completed its workflow for requirement RF-001 and delivered the following handoff:\n\n```json\n{\n  \"requirement_id\": \"RF-001\",\n  \"user_story\": \"As a registered user, I want to log in securely so that I can access my account.\",\n  \"business_priority\": \"high\",\n  \"report_path_agent_bdd_validation\": [\"outputs/bdd_validation_RF-001.md\"],\n  \"report_path_agent_risk_evaluator\": [\n    \"outputs/risk-evaluator-qa-strategies/outputs/risk_evaluator_qa_strategy_RF-001.md\",\n    \"outputs/risk-evaluator-qa-strategies/outputs/strategy_RF-001.json\",\n    \"outputs/risk-evaluator-qa-strategies/outputs/history_RF-001.json\"\n  ],\n  \"status\": \"COMPLETED\",\n  \"next_action\": \"orchestrator_artifacts_validation\"\n}\n```\n\nAll referenced files exist. The `bdd_validation_RF-001.md` contains all required sections (`## 1. Analyzed Requirement`, `## 2. Acceptance Criteria (Gherkin)`, `## 3. Validation Rules (Extracted NFRs)`, `## Workflow Execution Information`) with valid Gherkin scenarios and filled NFR values. The `strategy_RF-001.json` and `history_RF-001.json` comply with their respective schemas. The `history_RF-001.json` contains `\"owasp_analysis\": { \"matches\": [\"Aplication Risk ID: A07:2021\"] }` which correctly matches the Broken Access Control vulnerability described by the Risk Evaluator. The `artifacts/logs/` folder contains no `failure_log_workflow_RF-001_*.json` files.\n\nExecute the complete artifact-validator-fixing-loop skill for RF-001 and generate the final validation report.",
+            "expected_output": "A valid JSON success validation report stored at `artifacts/validation-report/validation_success_report_RF-001_{timestamp}.json`, compliant with `assets/artifact_validation_report_schema.json`, containing the `successful_validations` array (with entries for both sub-agents) and no `failure_validations` section. The skill must NOT trigger the Fixing Loop and must signal continuation to the User Deliverable Generation process.",
+            "files": [
+                "evals/files/happy_path/outputs/bdd_validation_RF-001.md",
+                "evals/files/happy_path/outputs/risk-evaluator-qa-strategies/outputs/risk_evaluator_qa_strategy_RF-001.md",
+                "evals/files/happy_path/outputs/risk-evaluator-qa-strategies/outputs/strategy_RF-001.json",
+                "evals/files/happy_path/outputs/risk-evaluator-qa-strategies/outputs/history_RF-001.json"
+            ],
+            "assertions": [
+                "The handoff JSON from risk-evaluator-qa-strategy-agent is parsed successfully and passes schema validation (all required fields: requirement_id, user_story, business_priority, report_path_agent_bdd_validation, report_path_agent_risk_evaluator, status, next_action are present)",
+                "All artifact files referenced in the handoff exist at their declared paths",
+                "The bdd_validation_RF-001.md contains all four required sections: '## 1. Analyzed Requirement', '## 2. Acceptance Criteria (Gherkin)', '## 3. Validation Rules (Extracted NFRs)', and '## Workflow Execution Information'",
+                "The Gherkin scenarios in bdd_validation_RF-001.md are syntactically valid (contain Given/When/Then keywords)",
+                "The strategy_RF-001.json and history_RF-001.json conform to their respective schemas defined in assets/strategy_schema_validation.json and assets/history_schema_validation.json",
+                "The OWASP Application Risk ID in history_RF-001.json exists in assets/reference_risk_standard.md and matches the vulnerability described by the Risk Evaluator",
+                "The Fixing Loop is NOT triggered (no retry or re-invocation of any sub-agent is initiated)",
+                "A success validation report file is created at artifacts/validation-report/validation_success_report_RF-001_{timestamp}.json",
+                "The success report is valid JSON and conforms to assets/artifact_validation_report_schema.json",
+                "The success report contains a non-empty 'successful_validations' array with one entry per sub-agent (bdd-validation-analyst-agent and risk-evaluator-qa-strategy-agent)",
+                "The success report does NOT contain a 'failure_validations' section (or the section is absent/empty as required by the schema for success reports)",
+                "The skill signals 'proceed to User Deliverable Generation' as the next workflow step"
+            ]
+        },
+        {
+            "id": "02-NC",
+            "description": "Negative Case - The BDD artifact is missing a mandatory section and the OWASP Risk ID in history_RF-002.json does not match the vulnerability described. The skill must trigger the Fixing Loop for the BDD agent (SCHEMA error category), produce a failure validation report, and respect the maximum iteration limit (2) before aborting with failure status.",
+            "prompt": "The risk-evaluator-qa-strategy-agent has completed its workflow for requirement RF-002 and delivered the following handoff:\n\n```json\n{\n  \"requirement_id\": \"RF-002\",\n  \"user_story\": \"As an admin, I want to export user data to CSV so that I can generate compliance reports.\",\n  \"business_priority\": \"medium\",\n  \"report_path_agent_bdd_validation\": [\"outputs/bdd_validation_RF-002.md\"],\n  \"report_path_agent_risk_evaluator\": [\n    \"outputs/risk-evaluator-qa-strategies/outputs/risk_evaluator_qa_strategy_RF-002.md\",\n    \"outputs/risk-evaluator-qa-strategies/outputs/strategy_RF-002.json\",\n    \"outputs/risk-evaluator-qa-strategies/outputs/history_RF-002.json\"\n  ],\n  \"status\": \"COMPLETED\",\n  \"next_action\": \"orchestrator_artifacts_validation\"\n}\n```\n\nThe `bdd_validation_RF-002.md` exists but is MISSING the `## 3. Validation Rules (Extracted NFRs)` section entirely. The `strategy_RF-002.json` and `risk_evaluator_qa_strategy_RF-002.md` comply with their schemas. The `history_RF-002.json` contains `\"owasp_analysis\": { \"matches\": [\"Aplication Risk ID: A99:2021\"] }` — this ID does NOT exist in the OWASP reference standard. The `artifacts/logs/` folder contains no prior `failure_log_workflow_RF-002_*.json` files. Simulate the scenario where the bdd-validation-analyst-agent fails to fix the missing section in both allowed retry attempts.",
+            "expected_output": "A failure validation report stored at `artifacts/validation-report/validation_failure_report_RF-002_{timestamp}.json`, compliant with `assets/artifact_validation_report_schema.json`. The report must include a `failure_validations` array documenting both failures: (1) missing section in bdd_validation_RF-002.md and (2) invalid/unrecognized OWASP Risk ID in history_RF-002.json. The Fixing Loop must be triggered for the BDD agent, attempted exactly 2 times (the maximum allowed), and then aborted. The final workflow status must be 'failure' and the skill must NOT proceed to User Deliverable Generation with a success status.",
+            "files": [
+                "evals/files/negative_case/outputs/bdd_validation_RF-002.md",
+                "evals/files/negative_case/outputs/risk-evaluator-qa-strategies/outputs/risk_evaluator_qa_strategy_RF-002.md",
+                "evals/files/negative_case/outputs/risk-evaluator-qa-strategies/outputs/strategy_RF-002.json",
+                "evals/files/negative_case/outputs/risk-evaluator-qa-strategies/outputs/history_RF-002.json"
+            ],
+            "assertions": [
+                "The handoff JSON from risk-evaluator-qa-strategy-agent is parsed and schema-validated before any artifact check is performed",
+                "The skill detects that bdd_validation_RF-002.md is missing the mandatory '## 3. Validation Rules (Extracted NFRs)' section",
+                "The detected gap is classified as 'SCHEMA' error category (output format non-compliance / missing mandatory section)",
+                "The skill detects that the OWASP Application Risk ID 'A99:2021' in history_RF-002.json does NOT exist in the reference standard",
+                "Both failures are recorded in the failure_validations array of the report with the correct error_category values ('missing_section' and 'functional_validation_failed' respectively)",
+                "The Fixing Loop is triggered and the bdd-validation-analyst-agent is instructed to regenerate the missing '## 3. Validation Rules (Extracted NFRs)' section with the specific failure details provided in the fix instruction",
+                "The Fixing Loop for the bdd-validation-analyst-agent is attempted no more than 2 times (the maximum allowed iterations per SKILL.md rules)",
+                "After exhausting the maximum allowed iterations without resolution, the skill aborts the Fixing Loop and does NOT attempt a 3rd retry",
+                "A failure validation report is created at artifacts/validation-report/validation_failure_report_RF-002_{timestamp}.json",
+                "The failure report is valid JSON and conforms to assets/artifact_validation_report_schema.json",
+                "The failure report does NOT contain a 'successful_validations' section (or the section is absent/empty as required for failure reports)",
+                "The failure report contains a non-empty 'failure_validations' array with at least 2 entries: one for the missing BDD section and one for the invalid OWASP ID",
+                "The workflow terminates with a failure status and the User Deliverable Generation process is invoked with a 'failure' status, not a 'success' status"
+            ]
+        }
+    ]
+}

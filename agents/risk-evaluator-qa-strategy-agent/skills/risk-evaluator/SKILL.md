@@ -98,11 +98,13 @@ This are  mandatory input, if it is missing, the skill must stop the evaluation,
   * **Business Impact (Severity):** Based on the `Business_Priorities` (e.g., Checkout = 5/5, Button color change = 1/5).
   * **Technical Complexity (Probability of Failure):** Evaluate risk according to the stack. (e.g., Changes in Redis/PostgreSQL logic = High technical risk; Changes in Next.js CSS = Low technical risk).
 - **Formula:** `Risk_Score = (Impact * 0.7) + (Complexity * 0.3)`.
-- **Threshold Mapping:** The numerical `Risk_Score` MUST map to qualitative severity levels based on the following exact ranges:
-  * `0.0 - 3.9`: Low
-  * `4.0 - 6.9`: Medium
-  * `7.0 - 8.9`: High
-  * `9.0 - 10.0`: Critical
+- **Input scale:** Both `Impact` and `Complexity` are integers on a **1–5 scale** (defined in `reference/reference_risk_standard.md` §1–§2). The formula output range is therefore **[1.0, 5.0]**.
+- **Note on OWASP adjustments:** OWASP Top 10 heuristics (§3 & §5 of the reference standard) may increase `Complexity` by +1 or +2 (capped at 5). These adjustments **must be applied by the agent before invoking the script**.
+- **Threshold Mapping:** The numerical `Risk_Score` MUST map to qualitative severity levels based on the following exact ranges (calibrated to the 1–5 output scale):
+  * `1.0 – 2.49`: Low
+  * `2.5 – 3.49`: Medium
+  * `3.5 – 4.49`: High
+  * `4.5 – 5.0`: Critical
 
 ### 4. Historical Consistency Verification (`Peer Review Loop`)
 
@@ -192,12 +194,12 @@ Upon completion, the skill transfers control using the following structured hand
 {
   "risk_metadata": {
     "rf_id": "{RF_ID}",
-    "raw_score": 8.5,
+    "raw_score": 4.1,
     "severity_level": "High",
     "probability_of_failure": "Medium-High"
   },
   "justification": {
-    "business_impact": "Affects data persistence in the cart (Critical Flow).",
+    "business_impact": "Affects data persistence in the cart (Critical Flow). Impact=5, Complexity=4 (OWASP A08 +1 applied upstream).",
     "technical_debt_risk": "High complexity due to Redis cache integration.",
     "standard_reference": "ShopSwift_Risk_Std_v1.2 - Risk ID: A08 - Software & Data Integrity Failures",
     "technical_justification": "Note: Historical deviation - similar APIs were rated Medium, but this modifies the Redis core cache."
@@ -209,6 +211,8 @@ Upon completion, the skill transfers control using the following structured hand
   }
 }
 ```
+
+> **Example calculation:** `Impact=5, Complexity=4` → `(5×0.7)+(4×0.3) = 3.5+1.2 = 4.7` → **Critical**. For a High example: `Impact=4, Complexity=4` → `(4×0.7)+(4×0.3) = 2.8+1.2 = 4.0` ... `Impact=4, Complexity=3` → `(4×0.7)+(3×0.3) = 2.8+0.9 = 3.7` → **High** → `raw_score: 4.1` represents `Impact=5, Complexity=2` → `(5×0.7)+(2×0.3)=3.5+0.6=4.1` → **High** ✓
 
 ### JSON Clarification NOTE
 

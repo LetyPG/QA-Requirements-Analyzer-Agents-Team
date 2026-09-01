@@ -2,9 +2,7 @@ specs/
 .venv/
 __pycache__/
 ui/.venv/
-
-
-
+.vscode/
 
 /__pycache__
 
@@ -14,14 +12,15 @@ ui/
 .vscode/
 
 #tests
+.ruff_cache/
 .pytest_cache/
 
 # solutions/outputs
 outputs/
 
 # validation artifact
-logs/
-validation-report/
+# logs/
+# validation-report/
 
 # temp artifacts
 tmp/

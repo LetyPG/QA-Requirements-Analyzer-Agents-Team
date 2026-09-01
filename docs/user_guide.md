@@ -1,22 +1,22 @@
 # User Guide and Best Practices
 
-This document explain the user best practices, responsabilities and usage of the framework for requirements analysis.   Also include additional recomendations that become useful during the usage, and were validated from the real usage experience
+This document explains user best practices, responsibilities, and usage of the framework for requirements analysis. It also includes additional recommendations that become useful during usage, validated from real usage experience.
 
 ## INDEX
 
 | Index | Description|
 | ----- | -----|
-| [Usage Flow Details](#usage-flow-details) | Explains the usage flow of the framework for real team work, mentionated the custom integration suggestions and current access points.|
-| [User Setup Responsabilities & Configuration Notes](#user-setup-responsabilities--configuration-notes) | Explains the solution setup and configurations notes for users.|
+| [Usage Flow Details](#usage-flow-details) | Explains the usage flow of the framework for real teamwork, mentioning custom integration suggestions and current access points.|
+| [User Setup Responsibilities & Configuration Notes](#user-setup-responsabilities--configuration-notes) | Explains the solution setup and configuration notes for users.|
 | [Post Deploy Monitoring and Metrics](#post-deploy-monitoring-and-metrics) | Explains the metrics and KPIs to monitor the solution in production.|
-| [Directives](#directives-recomendations) | Lists the directives and best recomendations for the framework.|
-| [Final Thoughts](#final-thoughts) | Details experience description objectives suggestions derived from the solution implementation and usage experience. Include LLM Model Comparisson Examples (Gemini 3.5 Flash (High) and Claude Sonnet 4.6 (Thinking))   |
+| [Directives](#directives-recomendations) | Lists the directives and best recommendations for the framework.|
+| [Final Thoughts](#final-thoughts) | Details experience descriptions, objectives, and suggestions derived from solution implementation and usage experience. Includes LLM Model Comparison Examples (Gemini 3.5 Flash (High) and Claude Sonnet 4.6 (Thinking)). |
 
 ## Usage Flow Details 
 
 Teams integrate the framework into their existing requirements workflow, typically before development handoff. The framework acts as a virtual QA analyst that reviews requirements collaboratively with the team, this could be integrated with team external ticketing or documentation platform through MCP, example: 
 
->The fallowings are suggestions, but is out off the current scope of this framework development
+>The following are suggestions, but are outside the current scope of this framework's development.
 
 **Custom integrations**
 The user can create custom integrations to connect the framework with other tools and platforms, such as:
@@ -29,25 +29,30 @@ The user can create custom integrations to connect the framework with other tool
 **Current solution access points:**
 - IDEs Interface with AI Agents Embeddings
 - CLI Agents 
-- As a Roadmap will be added a dedicated Web Interface to track the runtime pipeline and results.
+- As a Roadmap item, a dedicated Web Interface will be added to track the runtime pipeline and results.
 
-The solution runs the workflow using AI- Agents in secuenctial chain agents pipeline, the workflow is orchestrated by `orchestrator-agent.md` and uses the sub-agents and its skills for each refinement activity. This design allows easy addition of new agents and skills in the future, but eve the sub-agents logics is isolated the secuenctial chain provokes high coupling between them, in a way that changes in one agent proccessing and output generation can inpact the next.
+The solution runs the workflow using AI agents in a sequential agent chain pipeline. The workflow is orchestrated by `orchestrator-agent.md` and uses the sub-agents and their skills for each refinement activity. This design allows easy addition of new agents and skills in the future, but even though sub-agent logic is isolated, the sequential chain creates coupling between them, such that changes in one agent's processing and output generation can impact the next.
 
 
 >[Back to Top](#index)
 ---
 
-## User Setup Responsabilities & Configuration Notes
+## User Setup Responsibilities & Configuration Notes
 
-The project use 2 mportant artifacts considerated as constants for some reasoning and persistence contextual memory, this must be adpted to the real project context, for example:
+### Context Injection and System Constants
 
-- The [`risk_standard`](../agents/risk-evaluator-qa-strategy-agent/skills/risk-evaluator/reference/reference_risk_standard.md) file is a synthetic example of Risk matrix (Business Impact and Technical complexity), so it must be updated according to the organization's real risk matrix.
+The project uses 2 important artifacts considered as constants for reasoning and persistent contextual memory. These must be adapted to the real project context, for example:
 
-- The [`project_context_manifesto`](../project-context/project_context_manifesto.md) file is a synthetic example of project context, so it must be updated according to the organization's real project context.
+|Artifact| Description|Location|
+|---|---|---|
+| [`risk_standard`](../agents/risk-evaluator-qa-strategy-agent/skills/risk-evaluator/reference/reference_risk_standard.md) file | Synthetic example of Risk matrix (Business Impact and Technical complexity), which must be updated according to the organization's real risk matrix.| ./agents/risk-evaluator-qa-strategy-agent/skills/risk-evaluator/reference/reference_risk_standard.md|
+| [`project_context_manifesto`](../project-context/project_context_manifesto.md) file | Synthetic example of project context, which must be updated according to the organization's real project context.| ./project-context/project_context_manifesto.md|
 
-It is recomended edit 2 main contextual a resoning files acording with your projects real deails:
+**Artifacts Setup**
+You must take the 2 artifacts mentioned above and edit them according to your project's real details:
 
-1. `./project-context/project_context_manifesto.md`
+**1. Project Context** 
+`./project-context/project_context_manifesto.md`
 
 Currently system use a sytethic context manifesto, but the idea is :
 - Edit in `project-context/project_context_manifesto.md` this file and add your project context and business rules, to make the system contextually aware of your project.
@@ -57,22 +62,27 @@ Currently system use a sytethic context manifesto, but the idea is :
 |---|---|
 |Missing `context-manifesto-user-guidance` | The orchestrator triggers a guided process to help the user create the file |
 
-2. `./agents/risk-evaluator-qa-strategy-agent/skills/risk-evaluator/reference/reference_risk_standard.md`
+**2. Risk Standard** 
+Location: `./agents/risk-evaluator-qa-strategy-agent/skills/risk-evaluator/reference/reference_risk_standard.md`
 
 This file contains the Risk Evaluation standard used by the Risk Evaluator agent. It is a reference file that the agent uses to evaluate the risks of the requirements.
 Currently the refrence point to:
 - Business Impact Matrix (Scale 1-5), represents business impact details
-   - It is recomended keep the scale to avoid several change in other solutions parts such as the script `risk_calculator.py` and others.
-   - Edit only the description, impacts ext. Avoid edit the scale values.
+   - It is recommended to keep the scale to avoid changes in other solution parts such as the script `risk_calculator.py`.
+   - Edit only the description, impacts, etc. Avoid editing scale values.
 
 - Technical Complexity Matrix (Scale 1-5), represents technological stack details.
-   - It is recomended keep the scale to avoid several change in other solutions parts such as the script `risk_calculator.py` and others.
-   - Edit only the technological croterion with your project details.
+   - It is recommended to keep the scale to avoid changes in other solution parts such as the script `risk_calculator.py`.
+   - Edit only the technological criteria with your project details.
+   - If you need to use a different risk scale, you should consider making the proper adjustments to the script `risk_calculator.py`.
+
 >For more details of this setup needs see the file [implementation_risks.md](implementation_risks.md), on risk R2, R3 and R9. 
+
+>[Back to Top](#index)
 
 ### Hook Configuration.
 
-Currently the framework use a dedicated `agent.settings.json` file to configure the `PreToolUse` Hook, but if you already have a dedicated custom agent setting file for your project, you can copy the `PreToolUse` Hook configuration into your project's agent setting file, preserve the exact hook object and the script path and command.
+Currently the framework uses a dedicated `agent.settings.json` file to configure the `PreToolUse` Hook, but if you already have a dedicated custom agent setting file for your project, you can copy the `PreToolUse` Hook configuration into your project's agent setting file, preserving the exact hook object and script path/command.
 
 >[Back to Top](#index)
 ---
@@ -94,9 +104,9 @@ After you use the solution, you must monitor it in production to identify patter
 | **Human Validation Acceptance Rate** | Percentage of AI-generated refinement artifacts accepted with no or only minor modifications.
 | **Requirements Traceability Coverage** | Percentage of functional and non-functional requirements successfully traced to acceptance criteria, test cases, and downstream SDLC artifacts.
 | **Downstream Defect Reduction** | Reduction in defects discovered during development, testing, or production that originate from requirement deficiencies.|
-| **Compliance Acomplished** | Percentage of requirements meeting predefined compliance rules and restrictions (for the solution proccessing itself and for the business/project requirements under analysis)
-| **Continuous SDLC Improvement Index** | Trend metric comparing baseline and post-adoption values across requirement quality, rework, defect leakage, and review efficiency to evaluate sustained process improvement over multiple project iterations.
-| **Performance of the solution** | Resource consumption, response time etc.|
+| **Compliance Accomplished** | Percentage of requirements meeting predefined compliance rules and restrictions (for the solution processing itself and for the business/project requirements under analysis) |
+| **Continuous SDLC Improvement Index** | Trend metric comparing baseline and post-adoption values across requirement quality, rework, defect leakage, and review efficiency to evaluate sustained process improvement over multiple project iterations. |
+| **Performance of the Solution** | Resource consumption, response time, etc. |
 
 
 >[Back to Top](#index)
@@ -166,7 +176,7 @@ For a concise overview of all 19 directives, use this checklist during your impl
 
 The solution was evaluated during 6 months using the metrics defined in the section **Post Deploy Monitoring and Metrics** and the results were very good. The solution was able to reduce the time spent on requirement analysis and improve the quality of the generated artifacts. 
 
-The fallowings are practical suggestions base on the real experience:
+The following are practical suggestions based on real experience:
 
 - If your organization already has a mature and effective requirements refinement process, use this solution to complement and optimize existing practices rather than replacing established methodologies.
 - Use AI-assisted requirements refinement based on structured reasoning and Retrieval-Augmented Generation (RAG) to improve analysis quality, consistency, and contextual accuracy over general-purpose LLM prompting.
@@ -192,7 +202,7 @@ The next is an example of execution items results across 2 requirements examples
 
 | Proccessing Behavior and Comparison Item | Gemini 3.5 Flash (High) | Claude Sonnet 4.6 (Thinking) |
 |-----|-------|----|
-| **Adherence to Structural Constraints and Rules** | Failed the strict rule constraint requiring a minimum of 11 scenarios, generating only 5 basic scenarios.Omitted the "Validation Refinement Questions" section entirely.Wrote the Gherkin scenarios as inline sentences separated by commas rather than the traditional multi-line format, missing structural nuance.| Strictly followed the rule to generate a minimum of 11 BDD scenarios. It effectively categorized them by Happy Paths(HP), Alternative Flows/Boundary Conditions(AC), and Error Scenarios(ES). Included a detailed section for "Validation Refinement Questions", fulfilling optional/advanced constraints outlined in the framework.
+| **Adherence to Structural Constraints and Rules** | Failed the strict rule constraint requiring a minimum of 11 scenarios, generating only 5 basic scenarios. Omitted the "Validation Refinement Questions" section entirely. Wrote the Gherkin scenarios as inline sentences separated by commas rather than the traditional multi-line format, missing structural nuance. | Strictly followed the rule to generate a minimum of 11 BDD scenarios. It effectively categorized them by Happy Paths (HP), Alternative Flows/Boundary Conditions (AC), and Error Scenarios (ES). Included a detailed section for "Validation Refinement Questions", fulfilling optional/advanced constraints outlined in the framework. |
 | **Depth of Analysis (NFRs and QA Strategy)** | Provided solid but surface-level NFRs and QA testing strategies. Correctly identified the `A03:2021-Injection` risk and mapped it well, but the detail in the E2E and API testing recommendations was relatively standard.| Showed a much deeper semantic understanding of the project context, generating highly detailed validation rules (NFRs) encompassing Accessibility, Usability, Reliability, and UX specifically tailored to the payment workflow. Recommended an extensive 7-level QA strategy based heavily on the specific OWASP matches and NFRs identified. |
 | **Resource Utilization (Execution Metrics)** | Very fast and lightweight (9.0s and 6,500 total tokens).<br>- However, the speed and low tool count (5 tools) came at the cost of failing to meet the complex quantitative constraints (like the 11 scenarios).| Used significantly more tokens (13,360 total vs 6,500 for Gemini).<br>- Was slower (17.3s vs 9.0s).<br>- Used heavily iterated tool calling (15 tools vs 5), suggesting a more iterative reasoning and fixing loop process to verify schemas and outputs against the provided standards.|
 | **Execution Behavior** | The agent was executing the pipeline in order since the orchestrator instructions input to workflow output and. <br>- The agent only infom the final message as expected and not the intermediate steps information| The agent first explore and read all the documents across the complete framework and then start the analysis and generation pipeline.<br>The output message was detailed and the agent show his internal reasoning steps and the outcome by eacxh steps from the pipeline, and at the end provide more detail than was conditionated as expected|

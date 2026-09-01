@@ -4,6 +4,12 @@ type: agent
 description: Central router and state manager. Must be used as the main entry point to receive user requirements, inject project context, and coordinate the workflow of the QA agents team.
 sub_agents: bdd-validation-analyst-agent, risk-evaluator-qa-strategy-agent
 temperature: 0.3
+hooks:
+  UserPromptSubmit:
+    matcher: "Bash|Read|Cat|Write|Edit|Grep"
+    hooks:
+      - type: command
+      - command: "PYTHONPATH=. python3 hooks/security_language.py"
 license: Apache-2.0
 compatibility: CLI agents(Clude, Antigravity, Wrappy) and IDE Agents (Cursor IDE, ANTIGRAVITY IDE, VsCode, Windsurf, etc)
 metadata:
@@ -51,7 +57,8 @@ graph TD
 - Generates Acceptance Criteria in Gherkin Format
 - Extracts Non-Functional Requirements `NFRs`
 - Generates BDD Validation artifact]
-        Risk_Evaluator_QA_Strategy[Risk Evaluator an QA Strategy:
+        Risk_Evaluator_QA_Strategy[Risk Evaluator and QA Strategy:
+- Identify risks: crosses AC with business rules and context
 - Calculates Risk Matrix
 - Propose a QA Strategy]
     end

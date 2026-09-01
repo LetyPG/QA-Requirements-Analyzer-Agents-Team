@@ -1,4 +1,4 @@
-# Quick link Reference  
+# Quick Link Reference  
 
 This file contains detailed technical information explaining how the system achieves the requirements refinement process, and how the sub-agents represent the solution design.
 This file answers: **How was the Requirements Refinement process broken down into sub-agents as a human intellectual decomposition?**
@@ -6,8 +6,8 @@ This file answers: **How was the Requirements Refinement process broken down int
 | Index | Description|
 | ----- | -----|
 |[Problem Origin](#problem-origin) | Problem context |
-|[System-Level Decomposition Summary](#system-level-decomposition-summary) | Problem Descomposition in a Engineering System, detail architecture decisions and reference principles based applied |
-|[Orchestrator](#orchestrator) | Orchestrator details as the main component of the system  and brain orchestrate the workflow |
+|[System-Level Decomposition Summary](#system-level-decomposition-summary) | Problem Decomposition in an Engineering System, detailed architecture decisions and applied reference principles |
+|[Orchestrator](#orchestrator) | Orchestrator details as the main component of the system and brain that orchestrates the workflow |
 |[Sub-Agent A: BDD Validation Analyst](#sub-agent-a-bdd-validation-analyst) | BDD Validation Analyst details analyze functional requirements and derive acceptance criteria as BDD/Gherkin scenarios, extract NFRs, also check for inconsistencies or ambiguities in the requirements and generate refinement validation questions for the human stakeholders |
 |[Sub-Agent B: Risk Evaluator & QA Strategy](#sub-agent-b-risk-evaluator--qa-strategy) | Risk Evaluator & QA Strategy details, calculate impact score based on business impact and technical risks, and finally define a risk-based testing strategy |
 
@@ -16,7 +16,7 @@ This file answers: **How was the Requirements Refinement process broken down int
 
 ## Problem Origin
 
-In a consulting scenario, I worked with a startup that needed stronger quality assurance practices on eaerly development phases, but did not have a dedicated QA professional. To address this gap, I developed a solution to improve requirements before development begins, this was concibe as a **Shift-Left Quality** approach, which directly impacts on the **Software Development Life Cycle (SDLC) and the Testing Development Life Cycle (TDLC)** by using AI Agents, think on this as a LLM narrow capability which enhance and conditionated its reasoning trough specific parameters and knowledge bases, that reproduce the intelectual human process as a Software QA Specialist on Requirement Analysis, this increase the deterministic validation, reduce hallucinations, and variability of solution process in consecuence the response reliability and consistency, and finally augmented by human oversight and decision-making authority.
+In a consulting scenario, I worked with a startup that needed stronger quality assurance practices in early development phases, but did not have a dedicated QA professional. To address this gap, I developed a solution to improve requirements before development begins. This was conceived as a **Shift-Left Quality** approach, which directly impacts the **Software Development Life Cycle (SDLC) and the Testing Development Life Cycle (TDLC)** by using AI Agents. Think of this as an LLM narrow capability which enhances and conditions its reasoning through specific parameters and knowledge bases, reproducing the intellectual human process of a Software QA Specialist during Requirement Analysis. This increases deterministic validation, reduces hallucinations and solution variability, resulting in higher response reliability and consistency, augmented by human oversight and decision-making authority.
 
 This framework analyzes functional requirements written in IEEE-style RF format together with User Stories, derives acceptance criteria as BDD/Gherkin scenarios, identifies applicable non-functional requirements, performs security-oriented analysis inspired by threat modeling, estimates business-impact risks, and recommends a risk-based testing strategy.
 
@@ -34,7 +34,7 @@ The intellectual decomposition follows a **separation of concerns** model where 
 | Component | Reasoning Domain | Standards Harness | Output Contract |
 |---|---|---|---|
 | **Orchestrator** | Workflow state, validation, delivery | orchestration only | Final merged report + 5 output artifacts |
-| **Sub-Agent A / Skill 1** | Functional behavior → Gherkin and optionsal produces validation refinment questions | IEEE Std 830-1998; Example Mapping; Impact Mapping; Story Mapping | Gherkin AC (≥11 scenarios) via `behavioral_translation_template.json` |
+| **Sub-Agent A / Skill 1** | Functional behavior → Gherkin and optionally produces validation refinement questions | IEEE Std 830-1998; Example Mapping; Impact Mapping; Story Mapping | Gherkin AC (≥11 scenarios) via `behavioral_translation_template.json` |
 | **Sub-Agent A / Skill 2** | Architecture constraints → NFRs | Project Context Manifesto; WCAG 2.1 AA | `bdd_validation_{RF_ID}.md` |
 | **Sub-Agent B / Skill 1** | Quantitative risk diagnosis | OWASP Top 10; Weighted formula; Historical ADR | Risk score + severity + justification JSON |
 | **Sub-Agent B / Skill 2** | Risk → Test strategy mapping | ISO/IEC/IEEE 29119; ISTQB RBT methodology; NFR-to-test matrix | `strategy_{RF_ID}.json` + consolidated report |
@@ -55,8 +55,8 @@ The intellectual decomposition follows a **separation of concerns** model where 
 | SOLID Principle | Application in System Design |
 |-------------------|--------------------------------|
 | **Single Responsibility** | Each agent and skill has one well-defined responsibility. Sub-Agent A focuses only on functional requirements and NFR extraction, never touching risk or strategy. Sub-Agent B focuses only on risk assessment and test strategy planning. The Orchestrator handles only workflow management and validation |
-| **Open/Closed** | The system is open for extension but closed for modification. New QA processes can be added as new agents or skills without modifying existing code. For example, performance testing or security testing logics could be added as new sub-agents or procedures into new existing su-agent skills |
-| **Liskov Substitution** | All sub-agents implement the same interface for the Orchestrator. The Orchestrator can substitute any sub-agent with another that implements the same interface without breaking the system. Example BDD Validation Analyst could be substituted by another sub-agent that also takes an  Requierement Framgment and userstory and produce BDD scenarios |
+| **Open/Closed** | The system is open for extension but closed for modification. New QA processes can be added as new agents or skills without modifying existing code. For example, performance testing or security testing logic could be added as new sub-agents or procedures into existing sub-agent skills |
+| **Liskov Substitution** | All sub-agents implement the same interface for the Orchestrator. The Orchestrator can substitute any sub-agent with another that implements the same interface without breaking the system. Example: BDD Validation Analyst could be substituted by another sub-agent that also takes a Requirement Fragment and user story and produces BDD scenarios |
 | **Interface Segregation** | Each agent has a minimal, role-specific interface. Sub-Agent A doesn't need risk management interfaces, and Sub-Agent B doesn't need BDD scenario generation interfaces. This keeps agents lightweight and focused |
 | **Dependency Inversion** | High-level modules (Orchestrator) depend on abstractions (sub-agent interfaces) rather than low-level modules (specific agent implementations). This enables flexible composition and easier testing |
 
@@ -90,8 +90,8 @@ The Orchestrator is the **central router and state manager** of the entire frame
 | **State Management** | Tracks the status of every sub-agent invocation and ensures requirements are processed systematically |
 
 >  **Note:** For more detailed information see [Orchestrator system Prompt](../orchestrator-agent.md)
-> You could see rules, flow, ilustrative diagrams, contraints an contract scema used for validation. 
-> You could also see the orchestrator skills details for validation, fixing loop,  failure hanlding and user guidance for context generation.
+> You can see rules, flow, illustrative diagrams, constraints and contract schema used for validation. 
+> You can also see the orchestrator skills details for validation, fixing loop, failure handling, and user guidance for context generation.
 
 >[Back to Top](#index)
 
@@ -111,14 +111,14 @@ The intellectual decomposition here mirrors how a senior QA engineer approaches 
 1. First, understand *what* the system must do — functional behavior → BDD acceptance criteria
 2. Then, understand *how well* the system must do it — non-functional constraints → NFRs
 
-Separating these into two skills that represents 2 procedure scope funtional and non-funtional, optimizing reasoning depth, accuracy, narrow window of context to process, token usage and reducing error proneness.
+Separating these into two skills that represent two procedural scopes (functional and non-functional) optimizes reasoning depth, accuracy, context window, and token usage while reducing error-proneness.
 
-**Skills general Details**
+**Skills General Details**
 - Include input and output dependencies.
 - Use specific schemas as handoff contracts between skills
-- Apply spcific rules and conditionals
+- Apply specific rules and conditionals
 - Use self-validations.
-- Apply specifics constraints, using `Must`, `Should`, `Could`, `Won't`, methods 
+- Apply specific constraints, using `Must`, `Should`, `Could`, `Won't` methods 
 
 > **Note:** For more detailed information see [BDD Validation Analyst system Prompt](../agents/bdd-validation-analyst-agent/bdd-validation-analyst-agent.md)
 
@@ -159,7 +159,7 @@ Separating these into two skills that represents 2 procedure scope funtional and
 **Validation Questions Rationale**
 
 Apply Validation Pattern Matrix
-During refinement, for every input/control appearing in a BDD scenario, classify it first using validation pattern, and them apply a pattern checklist based in the classification to generate refinement questions to take in consideration for stakeholders users , Instead of only asking "Does this work?", ask: What type of input is this?
+During refinement, for every input/control appearing in a BDD scenario, classify it first using a validation pattern, and then apply a pattern checklist based on the classification to generate refinement questions for stakeholder users. Instead of only asking "Does this work?", ask: What type of input is this?
 
 Example:
 
@@ -244,7 +244,7 @@ This separation in 2 skills procedure allows to restrict scopes, optimizing reas
 
 **Risk Score Formula and Thresholds**
 
-The risc calculation logic is described in `scripts/risk_calculator.py`. See also `reference/reference_risk_standard.md` for the standards used for risk evaluation.
+The risk calculation logic is described in `scripts/risk_calculator.py`. See also `reference/reference_risk_standard.md` for the standards used for risk evaluation.
 
 ```
 Risk_Score = (Business_Impact × 0.7) + (Technical_Complexity × 0.3)

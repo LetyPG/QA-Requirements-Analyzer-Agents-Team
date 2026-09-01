@@ -8,22 +8,15 @@ from pathlib import Path
 
 import pytest
 
-# ---------------------------------------------------------------------------
 # Paths — resolved relative to this file so tests are portable
-# ---------------------------------------------------------------------------
-
 _PROJECT_ROOT = str(Path(__file__).resolve().parents[2])
 _HOOK_SCRIPT  = Path(__file__).resolve().parents[2] / "hooks" / "security_language.py"
 # Use the active interpreter so tests work both locally (inside .venv) and in CI
-# (where no .venv exists inside hooks/).  When the venv is active locally,
-# sys.executable already points to hooks/.venv/bin/python3.
+# (where no local .venv exists). When the root venv is active, sys.executable
+# already points to .venv/bin/python3.
 _VENV_PYTHON  = Path(sys.executable)
 
-
-# ---------------------------------------------------------------------------
 # Shared helper
-# ---------------------------------------------------------------------------
-
 def _run_hook(stdin_payload: dict) -> dict:
     """
     Invoke the hook as a subprocess, pass stdin_payload as JSON on stdin,
@@ -38,6 +31,7 @@ def _run_hook(stdin_payload: dict) -> dict:
         input=json.dumps(stdin_payload),
         capture_output=True,
         text=True,
+        check=False,
         cwd=_PROJECT_ROOT,
         env=env,
     )
@@ -56,15 +50,12 @@ def _run_hook_raw(stdin_text: str) -> subprocess.CompletedProcess:
         input=stdin_text,
         capture_output=True,
         text=True,
+        check=False,
         cwd=_PROJECT_ROOT,
         env=env,
     )
 
-
-# ===========================================================================
 # Integration tests — hook as a black-box subprocess
-# ===========================================================================
-
 @pytest.mark.integration
 class TestMainIntegration:
     """
@@ -165,4 +156,3 @@ class TestMainIntegration:
         assert output["execute_workflow"] is False
         assert output["risk_level"] == "high"
         assert "Prompt Injection" in output["block_reason"]
-

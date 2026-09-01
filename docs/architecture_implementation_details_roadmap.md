@@ -1,13 +1,13 @@
-# Quick link Reference  
+# Quick Link Reference  
 
-This files contains detailed technical information about the framework design and implementation.
+This file contains detailed technical information about the framework design and implementation.
 
 ## Index
 | Index | Description|
 |------|-----|
 |[Principles and Philosophy](#principles-and-philosophy)| Definition of the framework philosophy and principles|
 |[Fixing Loop Strategy](#fixing-loop-strategy)| The fixing loop strategy |
-|[Hook Layer](#hook-layer)| The deterministic pre-tool hook for security deterministic  governace, attack prevention, token economy strategy base on context file size limit, and language detection for better user experience |
+|[Hook Layer](#hook-layer)| The deterministic pre-tool hook for security deterministic governance, attack prevention, token economy strategy based on context file size limit, and language detection for better user experience |
 |[Roadmap](#roadmap)| Roadmap for future versions, features and solution enhancements  |
 
 ---
@@ -22,9 +22,9 @@ This files contains detailed technical information about the framework design an
 |**Best Industry Practices and Standards-based**| The framework embeds recognized software engineering and quality assurance standards into each analysis stage. Each subagent performs its evaluation using deterministic validation rules and established industry references rather than relying solely on free-form generative reasoning.<br>The following references are embedded in the framework:<br>- ISTQB Foundation Level syllabus<br>- IEEE Std 830-1998 and IEEE 29119 standards<br>- OWASP Top 10 security principles<br>- Risk-Based Testing principles<br>- Behavior-Driven Development (BDD) practices<br>- User Story Analysis best practices|
 |**Context First**|Currently the framework uses a specific file located at `./project_context_manifesto.md` to provide context to the sub-agents, but this is an agnostic solution, the real project context should be provided in a standardized file to ensure consistency and quality of the analysis. For that reason in case of absence of this context file, the orchestrator-agent will trigger the `context-manifesto-user-guidance` skill to guide the user in the creation of the file in case of absence.||
 |**Resource Consumption Control and Optimization**|The framework is designed to minimize resource consumption and costs. That's why the refinement requirement process is decomposed into sub-agents. These agents have separated responsibilities, reasoning parameters, and needed context as persistence memory. It also includes a resource consumption control section as a metric to monitor the resource consumption and costs each time a refinement runtime is executed.|
-|**Cross-Platform Compatibility**| The framework is designed to be compatible with various AI agent platforms, including CLI agents (Clude, Antigravity, Wrappy) and IDE Agents (Cursor IDE, ANTIGRAVITY IDE, VsCode, Windsurf, etc). |
+|**Cross-Platform Compatibility**| The framework is designed to be compatible with various AI agent platforms, including CLI agents (Claude, Antigravity, Wrappy) and IDE Agents (Cursor IDE, ANTIGRAVITY IDE, VsCode, Windsurf, etc). |
 |**Cross-Model AI Compatibility**| The framework is designed to be compatible with various AI models, including Claude, GPT, Llama, Mistral, and Gemini. This flexibility allows the framework to be used with different models depending on the user's preference and availability.|
-|**Language Agnostic**| The framework is designed to be used with different languages, including English, Spanish, French, German, and Italian. This flexibility allows the framework to be used with different languages depending on the user's preference and availability. Althout the framework use English as processing language, to reduce token consumption, and fallows internationalization standards, it can generate the deliverables in the language of the user request.|
+|**Language Agnostic**| The framework is designed to be used with different languages, including English, Spanish, French, German, and Italian. This flexibility allows the framework to be used with different languages depending on the user's preference and availability. Although the framework uses English as processing language, to reduce token consumption, and follows internationalization standards, it can generate the deliverables in the language of the user request.|
 
 >[Back to Top](#index)
 ---
@@ -36,18 +36,18 @@ The Fixing Loop is an iterative correction mechanism triggered by the Orchestrat
 - It requests the responsible sub-agent to correct its output, providing explicit feedback on what failed.
 - It is constrained by 2 maximum retry limits to prevent infinite loops and excess resource consumption, eventually falling back to a structured failure report if the issue cannot be automatically resolved.
 
-**Failures Clasification strategy**
-- The failures are classified and this determine the fixing loop strategy, for example:
+**Failures Classification strategy**
+- The failures are classified and this determines the fixing loop strategy, for example:
 
-  - **Minimal**: If the failures are minimal change such as typos or cosmetic errors, the fixing loop could not be triggered or the change will be requested to the specific sub-agent only if this is required.
-  - **Major**: If the failures are only in the second sub-agent the fixing loop will, be triggered only for that agents, but if the failures were in the first sub-agent, the fixing loop will be triggered for the entire workflow, considering the subagents outputs as inputs to the next subagents, this are the risk of the secuencial designe and the dependency between subagents.
-  - **Major Internals**: If the failures are detected by sub-agents in the handoff validation rules, the fixing loop will be triggered only for that sub-agent an only once  time, and the failure will be logged in the quality report.
+  - **Minimal**: If the failures are minimal changes such as typos or cosmetic errors, the fixing loop could not be triggered or the change will be requested to the specific sub-agent only if this is required.
+  - **Major**: If the failures are only in the second sub-agent the fixing loop will be triggered only for that agent, but if the failures were in the first sub-agent, the fixing loop will be triggered for the entire workflow, considering the subagents outputs as inputs to the next subagents, these are the risks of the sequential design and the dependency between subagents.
+  - **Major Internals**: If the failures are detected by sub-agents in the handoff validation rules, the fixing loop will be triggered only for that sub-agent and only once, and the failure will be logged in the quality report.
   - **Critical**: If the failures are critical, the fixing loop will be triggered to correct the failures.
 
   **Failure Report**
-  - The `artifacts/validation-report/` sub folder will contain the artifacts validation report of the runtime executed, this will keep auditable and trazability to agents and outputs, including the number of fixing loops triggered.
-  - The `artifacts/logs/` sub folder will containg the runtine logs in case the fixing loop will excced the max number of retries.
- and the fix will be done by the user manually or need external responsabilities. 
+  - The `artifacts/validation-report/` sub-folder will contain the artifacts validation report of the runtime executed, this will keep auditable traceability to agents and outputs, including the number of fixing loops triggered.
+  - The `artifacts/logs/` sub-folder will contain the runtime logs in case the fixing loop will exceed the max number of retries
+ and the fix will be done by the user manually or need external responsibilities. 
 
 >[Back to Top](#index)
 ---
@@ -101,7 +101,7 @@ The Hook Contract is a JSON schema that defines the data structures that:
 
 | Attribute | Type | Description |
 |-----------|------|-------------|
-| `execute_workflow` |Boolean|True  → orchestrator proceeds with the workflow. False → orchestrator aborts immediately andsurfaces block_reason to the user.|
+| `execute_workflow` |Boolean|True  → orchestrator proceeds with the workflow. False → orchestrator aborts immediately and surfaces block_reason to the user.|
 | `trace_id` |UUID4 string |linking this hook invocation to all downstream artifacts for audit traceability.|
 
 **Optional enrichment fields** (present when execute_workflow is True): 
@@ -200,9 +200,9 @@ The hook enforces a deterministic Prompt Injection security gate using a **Struc
 **Detection Logic**
 
 1. **Structural Boundary Check**: The regex anchors to the start and end of the user's message. This ensures that injected code cannot influence the system-level instructions or the hook's behavior. 
-For that reason only is allowed this instrction pattern at the begining of the prompt: `Run` followed of the input artifacts ( RF, and US), and at the end cannot be added any other instruction. Any intrsuction out of this boundaries is considered as an injection and cause the block of the request. This ensures the integrity of the system instructions.  
+For that reason only this instruction pattern is allowed at the beginning of the prompt: `Run` followed by the input artifacts (RF, and US), and at the end no other instruction can be added. Any instruction outside of these boundaries is considered an injection and causes the request to be blocked. This ensures the integrity of the system instructions.  
 
-2. **Input Extraction Logic**: The system only expects as input the RF IEE format and the user story as fallow: `RF-[rf_id]: [action] US[<user story>]`. The regex `"RF-[a-zA-Z0-9\-]+:\s*(.*?)\.?\s*US\[(.*?)\].?$"` is used to extract the `rf_id`, the `action`, and the `user_story` from the user's message.  
+2. **Input Extraction Logic**: The system only expects as input the RF IEEE format and the user story as follows: `RF-[rf_id]: [action] US[<user story>]`. The regex is used to extract the `rf_id`, the `action`, and the `user_story` from the user's message.  
 
 #### Language Detection
 
@@ -237,7 +237,7 @@ This layer prevents attackers from bypassing LLM format validations by hiding in
 
 **Installation**
 
-Sugestion Virtual Environment
+Suggested Virtual Environment
 ```bash
 python3 -m venv .venv
 source .venv/bin/activate
@@ -276,7 +276,7 @@ brew install libmagic             # macOS
 
 - Improve the User Experience (UX) of the framework.
 - Input requirements in a user friendly way. 
-- Execute runtime in esasy btton action `run-refinement`.
+- Execute runtime in easy button action `run-refinement`.
 - Track the runtime pipeline and artifacts.
 - Generate reports of the runtime performance metrics
 
@@ -287,8 +287,8 @@ For more details see [Skill Test Strategy-Roadmap](docs/qa_criteria_test_compone
 
 ### 3. Automation strategy
 
-Currently the system recomend an scenario to automation if  the risk were clasified as high or critical risk with score above or equal to 3.5, or it is a regression scenario.
-For future versions the automation recomendation rule will be slightly more extensible for future versions. Instead of hard-coding only two conditions, this will be configured as **automation drivers**:
+Currently the system recommends a scenario for automation if the risk was classified as high or critical risk with score above or equal to 3.5, or it is a regression scenario.
+For future versions the automation recommendation rule will be slightly more extensible for future versions. Instead of hard-coding only two conditions, this will be configured as **automation drivers**:
 
 * **Risk Driver** – High business or technical risk (Risk ≥ 3.5).
 * **Regression Driver** – Frequently executed regression scenario.

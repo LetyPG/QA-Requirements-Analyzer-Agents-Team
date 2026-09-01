@@ -1,0 +1,10 @@
+[tool.pytest.ini_options]
+# Single test root — all deterministic layers live under tests/
+# Run from repo root: pytest tests/ -v
+testpaths = ["tests"]
+python_files = ["test_*.py"]
+python_classes = ["Test*"]
+python_functions = ["test_*"]
+markers = [
+    "integration: mark test as integration-level (invokes hook as a subprocess).",
+]
