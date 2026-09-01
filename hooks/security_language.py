@@ -21,7 +21,6 @@ import re
 import sys
 import uuid
 from pathlib import Path
-from typing import List, Optional, Tuple
 
 # ---------------------------------------------------------------------------
 # Optional imports — graceful degradation if libraries are not installed.
@@ -35,7 +34,10 @@ except ImportError:
     _MAGIC_AVAILABLE = False
 
 try:
-    from lingua import Language, LanguageDetectorBuilder  # type: ignore[import-untyped]  # optional
+    from lingua import (  # type: ignore[import-untyped]  # optional
+        Language,
+        LanguageDetectorBuilder,
+    )
     _LINGUA_AVAILABLE = True
 except ImportError:
     _LINGUA_AVAILABLE = False
@@ -138,24 +140,21 @@ _LINGUA_LANGUAGE_MAP: dict[str, str] = {
 # Security Gate
 # ===========================================================================
 
-def _resolve_file_paths(tool_input: dict) -> List[str]:
+def _resolve_file_paths(tool_input: dict) -> list[str]:
     """
     Extract file paths referenced in the tool's input arguments.
 
     Scans all string values in the tool_input dict for path-like strings
     (values starting with '/' or './' or containing a file extension).
     """
-    paths: List[str] = []
+    paths: list[str] = []
     for value in tool_input.values():
         if isinstance(value, str):
             candidate = value.strip()
             # Heuristic: treat as a file path if it starts with known prefixes
             # or contains a dot suffix suggesting a file extension.
             if (
-                candidate.startswith("/")
-                or candidate.startswith("./")
-                or candidate.startswith("../")
-                or (len(candidate) < 512 and "." in Path(candidate).name)
+                candidate.startswith(("/", "./", "../")) or len(candidate) < 512 and "." in Path(candidate).name
             ):
                 paths.append(candidate)
         elif isinstance(value, list):
@@ -165,7 +164,7 @@ def _resolve_file_paths(tool_input: dict) -> List[str]:
     return paths
 
 
-def _effective_blocked_extensions(extensions: Optional[HookExtensions]) -> frozenset[str]:
+def _effective_blocked_extensions(extensions: HookExtensions | None) -> frozenset[str]:
     """Return the active deny-list, minus any caller-granted overrides."""
     if extensions and extensions.allowed_extensions:
         overrides = frozenset(ext.lower() for ext in extensions.allowed_extensions)
@@ -173,7 +172,7 @@ def _effective_blocked_extensions(extensions: Optional[HookExtensions]) -> froze
     return BLOCKED_EXTENSIONS
 
 
-def _check_extension(filepath: str, blocked: frozenset[str]) -> Optional[str]:
+def _check_extension(filepath: str, blocked: frozenset[str]) -> str | None:
     """
     Return a block reason if ANY suffix in the file path is blocked.
     Uses pathlib.Path.suffixes to catch compound extensions like .pdf.exe.
@@ -188,7 +187,7 @@ def _check_extension(filepath: str, blocked: frozenset[str]) -> Optional[str]:
     return None
 
 
-def _check_mime_type(filepath: str) -> Optional[str]:
+def _check_mime_type(filepath: str) -> str | None:
     """
     Return a block reason if the MIME type of the file is on the deny-list.
     Falls back gracefully if python-magic is not installed.
@@ -206,12 +205,13 @@ def _check_mime_type(filepath: str) -> Optional[str]:
                 f"Blocked MIME type detected: '{mime}' for file '{p.name}'. "
                 f"This file type is not permitted as input."
             )
-    except Exception:
-        pass  # Never fail the hook due to MIME detection errors
+    except (OSError, ValueError) as e:
+        # Log and gracefully degrade to extension check only
+        print(f"[WARNING] MIME detection failed: {e}", file=sys.stderr)
     return None
 
 
-def _check_file_size(filepath: str, max_bytes: int) -> Optional[str]:
+def _check_file_size(filepath: str, max_bytes: int) -> str | None:
     """Return a block reason if the file exceeds the size limit."""
     try:
         p = Path(filepath)
@@ -225,11 +225,12 @@ def _check_file_size(filepath: str, max_bytes: int) -> Optional[str]:
                     f"({size_mb:.1f} MB > {limit_mb:.0f} MB limit). "
                     f"Reduce file size or split into smaller inputs."
                 )
-    except Exception:
-        pass
+    except (OSError, ValueError) as e:
+        # Log and gracefully degrade
+        print(f"[WARNING] File size check failed: {e}", file=sys.stderr)
     return None
 
-def _check_prompt_injection(prompt: str) -> Tuple[Optional[str], Optional[dict]]:
+def _check_prompt_injection(prompt: str) -> tuple[str | None, dict | None]:
     """
     Validates the prompt against the strict IEEE format regex.
     Returns (block_reason, extracted_components_dict).
@@ -246,8 +247,8 @@ def _check_prompt_injection(prompt: str) -> Tuple[Optional[str], Optional[dict]]
     match = pattern.match(prompt.strip())
     if not match:
         return (
-            "Prompt Injection Protection: Input does not strictly adhere to the expected IEEE format or contains extraneous content. "
-            "Format required: Run RF-[ID]: [action]. US[[user story]] OR User Story: [user story].",
+            ("Prompt Injection Protection: Input does not strictly adhere to the expected IEEE format or contains extraneous content. "
+            "Format required: Run RF-[ID]: [action]. US[[user story]] OR User Story: [user story]."),
             None
         )
         
@@ -267,7 +268,7 @@ def _check_prompt_injection(prompt: str) -> Tuple[Optional[str], Optional[dict]]
     return None, extracted
 
 
-def run_security_gate(context: HookContext) -> Optional[HookResult]:
+def run_security_gate(context: HookContext) -> HookResult | None:
     """
     Execute the security validation sequence (fail-closed).
 
@@ -321,7 +322,7 @@ def run_security_gate(context: HookContext) -> Optional[HookResult]:
 # Language Detection
 # ===========================================================================
 
-def _detect_language(text: str) -> Tuple[str, float]:
+def _detect_language(text: str) -> tuple[str, float]:
     """
     Detect the language of the input text using lingua (offline).
 
@@ -373,7 +374,9 @@ def _detect_language(text: str) -> Tuple[str, float]:
 
         return (lang_name, confidence)
 
-    except Exception:
+    except (RuntimeError, LookupError) as e:
+        # Log detection failure and fall back to English
+        print(f"[WARNING] Language detection failed: {e}", file=sys.stderr)
         return ("English", 0.0)
 
 
@@ -411,7 +414,7 @@ def _generate_trace_id() -> str:
     return str(uuid.uuid4())
 
 
-def _parse_stdin() -> Tuple[dict, List[str]]:
+def _parse_stdin() -> tuple[dict, list[str]]:
     """
     Read and parse the JSON payload from stdin (Claude PreToolUse protocol).
 
