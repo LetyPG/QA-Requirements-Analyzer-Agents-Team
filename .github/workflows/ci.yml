@@ -40,7 +40,7 @@ jobs:
       # ── 4. Unit Tests for hooks ───────────────────────────────────────────
       - name: Run Unit Tests for hooks
         run: |
-          pytest tests/hooks/ -m "not integration" -v --tb=short
+          pytest tests/hooks/ -v --tb=short
         env:
           PYTHONPATH: ${{ github.workspace }}
 
