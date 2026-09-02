@@ -16,11 +16,11 @@ ui/
 .pytest_cache/
 
 # solutions/outputs
-outputs/
-
-# validation artifact
+# outputs/
 # logs/
 # validation-report/
+
+
 
 # temp artifacts
 tmp/
