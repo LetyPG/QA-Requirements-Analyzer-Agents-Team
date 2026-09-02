@@ -2,6 +2,17 @@
 
 All notable changes to this project are documented in this file.
 
+## [1.0.1] - 2026-09-02
+
+### Features
+- Not applicable.
+
+### Updates
+- Added `README.md` documentation in `outputs/` and `artifacts/` directories detailing folder purposes, deliverables, and user guidance.
+
+### Patches
+- Added `.gitignore` placeholder files to track empty output and artifact directory structures in remote Git repositories.
+
 ## [1.0.0] - 2026-09-01
 
 ### Features
