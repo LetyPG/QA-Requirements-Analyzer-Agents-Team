@@ -1,0 +1,8 @@
+# Ignore all files in this directory
+*
+# Except this .gitignore file
+!.gitignore
+# This is a report and logs foler, for that it is not recomended 
+# to store this type of files in a version control system.
+# But if you need to store this type of files
+# you can remove this folder anytime.
