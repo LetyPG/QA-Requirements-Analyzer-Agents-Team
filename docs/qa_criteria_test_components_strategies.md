@@ -10,7 +10,7 @@ This document describes the testing strategies for the QA Criteria Validation an
 | [Component Test Strategy](#component-test-strategy) | The hook layer is the only deterministic Python component in this framework. Its test suite validates that security and language logic behave correctly before any LLM reasoning takes place. Failures here have the highest impact: a missed block or a wrong language rule propagates silently into all downstream agent outputs.|
 | [Test Runner Guide](#test-runner-guide) | how to run all the components tests |
 | [Skill Test Strategy-Roadmap](#skill-test-strategy-roadmap) | Describe the next auto validation feature of the framework as roadmap, which is the external validation engine for the skills using *LLMs Models Judge* and `evals`. |
-
+ 
 
 ## QA Criteria: Validation and Verification Strategy
 

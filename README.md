@@ -52,6 +52,7 @@ The repo structure is organized as follows:
 |_README.md                # Main project documentation
 ```
 >[Back to Top](#index)
+
 ---
 ## What Problem Does It Solve?
 
@@ -106,6 +107,8 @@ Run RF-ID "RF-001" The system must allow users to log in
 User Story "User Story: as a user I want to log in so that I can access the system"
 ```
 >See [data-test-poc](data-test-poc/data-test-poc.md) for more examples
+
+**Strongly recommended: Avoid running multiple requirements refinement processes within the same chat session to prevent context window overload and high resource consumption. Instead run diffrent session by each requiremrnt Refinement proccesses**
 
 For best practices and usage, see:
 - [Post Deploy Monitoring and Metrics](./docs/user_guide.md#post-deploy-monitoring-and-metrics)

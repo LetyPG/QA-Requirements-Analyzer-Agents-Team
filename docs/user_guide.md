@@ -8,6 +8,7 @@ This document explains user best practices, responsibilities, and usage of the f
 | ----- | -----|
 | [Usage Flow Details](#usage-flow-details) | Explains the usage flow of the framework for real teamwork, mentioning custom integration suggestions and current access points.|
 | [User Setup Responsibilities & Configuration Notes](#user-setup-responsabilities--configuration-notes) | Explains the solution setup and configuration notes for users.|
+| [Usage Mode](#usage-mode)| Explain trigger command and chat agent details to start the the workflow execution|
 | [Post Deploy Monitoring and Metrics](#post-deploy-monitoring-and-metrics) | Explains the metrics and KPIs to monitor the solution in production.|
 | [Directives](#directives-recomendations) | Lists the directives and best recommendations for the framework.|
 | [Final Thoughts](#final-thoughts) | Details experience descriptions, objectives, and suggestions derived from solution implementation and usage experience. Includes LLM Model Comparison Examples (Gemini 3.5 Flash (High) and Claude Sonnet 4.6 (Thinking)). |
@@ -84,7 +85,34 @@ Currently the refrence point to:
 
 Currently the framework uses a dedicated `agent.settings.json` file to configure the `PreToolUse` Hook, but if you already have a dedicated custom agent setting file for your project, you can copy the `PreToolUse` Hook configuration into your project's agent setting file, preserving the exact hook object and script path/command.
 
+You should consider that the `hook` is embedding as a parameter within the orchestrator frontmatter, for security prioritization, but if you need to change this restrict rule you could remove this parameter manually. 
+
+---
+
+## Usage Mode 
+
+- Initialize a chat prompt in the IDE or via CLI, requesting the refinement process with `orchestrator-agent.md`. 
+- Use the specific command instruction format starting with **Run**, followed by the input artifacts (RF and US). If you don't follow this format setup, the `PreToolUse` hook will block the request. This was implemented as a security measure; see more details in [Architecture Details - Hook Section](architecture_implementation_details_roadmap.md#hook-layer).
+- Remember the `project_context_manifesto.md` must exist and be placed in the `./project-context` directory.
+- Wait until the full pipeline completes and delivers the results.
+
+**Strongly recommended: Avoid running multiple requirements refinement processes within the same chat session to prevent context window overload and high resource consumption. Instead run different session by each requiremrnt Refinement proccesses**
+
+**Example Prompt**
+
+```txt
+Run RF-ID "RF-001" The system must allow users to log in
+User Story "User Story: as a user I want to log in so that I can access the system"
+```
+>See [data-test-poc](data-test-poc/data-test-poc.md) for more examples of diffrent complexities.
+
+For best practices and usage, see:
+- [Post Deploy Monitoring and Metrics](#post-deploy-monitoring-and-metrics)
+- [Directives Recommendations](#directives-recommendations)
+- [Final Thoughts](#final-thoughts), includes a model comparison table with performance and reasoning process benchmarks.
+
 >[Back to Top](#index)
+
 ---
 
 ## Post Deploy Monitoring and Metrics
