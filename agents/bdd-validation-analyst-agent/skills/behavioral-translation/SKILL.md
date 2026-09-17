@@ -215,10 +215,23 @@ Before handoff, you MUST review your own generated Gherkin, fallowing the next s
 - [ ] verify abstract constraints are used whenever limits are unspecified.
 - [ ] verify scenario names describe observable behavior.
 - [ ] verify implementation details are not introduced.
+- [ ] verify one behavior only; can run independently.
+- [ ] verify no unrelated concerns bundled (split functional vs performance, a11y, etc. when separate)
+- [ ] verify stable vocabulary (no synonym swapping)
+- [ ] verify domain-level abstraction; no unnecessary UI/API/DB plumbing in steps
+- [ ] verify state over navigation where it keeps the scenario clearer
+- [ ] verify minimal but sufficient `Given` context
+- [ ] verify concrete, realistic example data (not generic placeholders)
+- [ ] verify steps are third-person, present tense, subject–predicate
+- [ ] verify strict Given → When → Then order; `Then` outcomes are observable
+- [ ] verify no UI/automation mechanics leaked into steps
+- [ ] verify blank line between scenarios in the same file
+- [ ] verify scenario is short (ideally < 10 steps); tables fit on one screen
 
 ---
 
 ## Constraints 
+
 
 |**Type**|**Rule**|
 |---|---|
@@ -241,6 +254,20 @@ Before handoff, you MUST review your own generated Gherkin, fallowing the next s
 |**Won't**|Include any UI or automation mechanics such as: selectors, XPath, CSS selectors, element identifiers, click element, wait for, scrolling, browser-specific operations, framework-specific commands|
 |**Won't**|Invent values or limits when they are not specified|
 |**Won't**| Produce documentation of the analysis methodology|
+
+### Common anti-patterns to avoid
+
+- Mixing multiple behaviors into one scenario (multiple unrelated actions or assertions).
+- Mixing unrelated **concerns** in one scenario (for example, happy-path functionality plus load time
+  or unrelated accessibility rules) when they deserve separate specifications.
+- Encoding UI implementation details (selectors, DOM structure) into step text.
+- Over-specifying navigation and clicks when **state** would communicate the same precondition more
+  clearly.
+- Bloated `Given` chains that set up context the scenario never needs.
+- Vague assertions ("it works", "it succeeds", "the user is logged in" without an observable signal).
+- Placeholder example data (`foo` / `bar`) that does not read like a real specification example.
+- Overusing `Scenario Outline` to generate many rows without distinct behavioral value.
+- Extremely long scenarios or tables that no human will read or will seem like a *wall of text*
 ---
 
 ## **Internal Handoff (To Skill 2):**

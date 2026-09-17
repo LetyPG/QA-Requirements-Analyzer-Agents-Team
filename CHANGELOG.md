@@ -2,6 +2,20 @@
 
 All notable changes to this project are documented in this file.
 
+## [1.1.2] - 2026-09-17
+
+### Features
+- Added BDD discovery technique selection framework (`Gotcha: Choosing the BDD Discovery Technique`) in `requirements_analysis_techniques.md` to systematically select between Impact Mapping, Story Mapping, Example Mapping, or Combined approaches.
+- Added strict Gherkin behavioral rules in `behavioral-translation` skill, enforcing domain-level abstractions, state-over-navigation principles, single-purpose scenarios, step length limits, and clear separation of quality concerns.
+- Added scenarios descriptions anti-pattern and extended auto-validation checklist in `behavioral-translation` skill.
+- Added security guardrails in `orchestrator-agent.md`, establishing proactive Zero Trust workflow protection, data context anti-leakage constraints, and system prompt/manifesto confidentiality.
+
+### Updates
+- Updated MoSCoW self-verification criteria in `behavioral-translation` skill to explicitly forbid infrastructure terminology leakage and UI/automation mechanics.
+
+### Patches
+- Not applicable.
+
 ## [1.0.2] - 2026-09-04
 
 ### Features
