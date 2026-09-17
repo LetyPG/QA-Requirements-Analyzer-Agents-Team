@@ -27,8 +27,8 @@ The skill operates under a seven-stage process:
 2. **Extraction**
 3. **Analysis**
 4. **Generation**
-5. **Style Conventions**
-6. **Validation Pattern Enrichment**
+5. **Acceptance Criteria as User Scenarios (Gherkin) Rules**
+6. **Validation Refinement Questions**
 7. **Self-Validation (Quality Verification)**
 Finally **Handoff to `nfr-extraction-and-reporting` skill**
 
@@ -67,25 +67,67 @@ Extracts the `RF_ID` to maintain traceability.
 - Identifies the precondition (Given), the triggering action (When) and the observable result (Then).
 
 ### 4. Generation:
-- Generates a **minimum of 11 Acceptance Criteria as User Scenarios** (AC), expand this analysis into:
+- Generates a **minimum of 11 Acceptance Criteria as User Scenarios (AC)**, expand this analysis into:
    - 3 **Happy paths**
    - 4 **Alternative flows/Boundary conditions- Edge Cases**
    - 4 **Error scenarios** 
 
-**Rule**: 
-- Use as reasoning parameter the reference file `reference/requirements_analysis_techniques.md`, which contains standards  techniques, such as: Example Mapping, Impact Mapping,  Story Mapping
-- For include data in scenrfaios genration you will fallow the **Data Usage Specification** section
+**Procedure**: 
+- Use as reasoning parameter the reference file `reference/requirements_analysis_techniques.md`, which contains standards  techniques, such as: Example Mapping, Impact Mapping,  Story Mapping.
+- For AC, consider user behavior as **steps** in order to generate this,  use the rules from **5 Acceptance Criteria as User Scenarios (Gherkin) Rules**
+- Each AC represent one independent behavior or quality concern per scenario, and it won't combine unrelated concerns such as:
+  - functional behavior + performance
+  - functional behavior + accessibility
+  - functional behavior + security
+  - unrelated functional behaviors
+**Exception:** Multiple concerns MAY coexist only when they explicitly describe onebehavior that inherently spans those concerns.
+- For include data in scenarios, you will use the **5.3 Data Usage Specification** section
 - **Complexity Coverage**: the generated acceptance criteria must cover at least 95% of the complexity of the requirement. 
 
-### 5. Style Conventions (Gherkin):
+### 5. Acceptance Criteria as User Scenarios (Gherkin) Rules:
 
-The Aceptance Criterias considered as the User Scenarios must be ensure its compliance with the fallowing Gherkin Style Conventions
-   - Use strictly English keywords (`Given`, `When`, `Then`, `And`, `But`).
-   - Scenario names must be concise and descriptive.
-   - Do not use UI-specific implementation details (e.g., "click the red button"), use behavior-focused language (e.g., "submit the payment form").
-   - To include data as refrence for 
+The Acceptance Criteria considered as the User Scenarios must be ensure its compliance with the fallowing Rules:
 
-#### Data Usage Specification
+#### 5.1 Gherkin Style Conventions
+- Use strictly English keywords (`Given`, `When`, `Then`, `And`) as steps in scenarios.
+- Scenario names/titles must be concise and descriptive and use **one single-line, behavior-focused title**, for each `Scenario`.
+- The scenarios are considered **domain-level abstractions**express steps at the domain/business level, use product, business, and actor terminology understandable to
+a domain stakeholder, and describes what the *actor* does and what the *system* does.
+
+#### 5.2 Structure and Intent
+- **Chronological Execution**: The steps inside the scenario must follow a logical flow that mimics how a user would interact with the system.
+- **One Single Purpose**: Each scenario must validate a single behavior or outcome, scenario should be granular and independent. Avoid mixing unrelated validations within the same scenario to maintain clarity and focus.
+- **Behavior Over Implementation**: Avoid mentioning UI elements, implementation details, or specific technologies (e.g., "click the red button"), focus on the business behavior using behavior-focused language (e.g., "submit the payment form").
+- **State Over Navigation**: Prioritize describing scenarios, as far as possible, in terms of system states and transitions rather than page loads or screen navigation, express meaningful starting states instead of reproducing every interaction required to reach that state, **unless** the interaction path itself is the behavior being specified. 
+
+*Example:*
+
+```gherkin
+PREFER:
+`Given the user is signed in with role "Editor"`
+
+OVER:
+`Given the user opens the login page`
+`When the user enters the username`
+`And the user enters the password`
+`And the user clicks Login`
+```
+- **Scenario Length**: Each scenario must contain fewer than 10 steps, preferrably between 4 or 6 steps, in case a scenario requires more than 10 steps, evaluate whether:
+    - multiple behaviors have been combined,
+    - unnecessary navigation/setup is present,
+- Given context can be reduced,
+- a Scenario Outline or data table can simplify repetition.
+
+IF the scenario still represents one coherent behavior after simplification,
+it MAY exceed 10 steps.
+
+#### 5.3 Vocabulary (ubiquitous language) and Language
+
+- Use **one stable vocabulary** for roles, domain objects, and states.
+- **Do not swap synonyms** for the same concept unless the product meaningfully distinguishes them (for example: "order" vs "purchase" vs "cart").
+- **Declarative Language**: Steps should describe "what" needs to happen, not "how" it should happen, it should describe the intended behavior and resulting system state rather than  rescribing implementation procedures.
+
+#### 5.4 Data Usage Specification
 
 **Data Generalization Conventions:**
 - Represent unknown values as business constraints.
@@ -100,7 +142,7 @@ The Aceptance Criterias considered as the User Scenarios must be ensure its comp
 | Password | Given the password is "Password123!" | Given the password satisfies the password policy |
 | Amount | Given the purchase amount is $500 | Given the purchase amount is within the permitted transaction range |
 
-#### **Rule Priority**
+**Rule Priority**
 
 In case that requirement information include data or business rules provided by the orchestrator, the following table shows how to represent them:
 
@@ -188,12 +230,15 @@ Before handoff, you MUST review your own generated Gherkin, fallowing the next s
 |**Must**| Ensure the acceptance criteria cover at least 95% of the requirement complexity.|
 |**Must**| Before add any data set in scenarios, you must follow the **Data Usage Specification**.|
 |**Should**| Genrate scenario names that describe observable behavior.|
-| **Could**| Include traceability markers (e.g., Rule ID, Story ID).
+|**Should**| Scenarios be declarative rather than imperative.|
+|**Could**| Include traceability markers (e.g., Rule ID, Story ID).
 |**Could**| Report unresolved questions separately.|
 | **Won't** | NEVER process **Project Context Snippets** if executable files type are provided, like exe, .bat, .sh, .cmd, .ps1, .js, vbs, .py... etc.  |
 |**Won't**| Introduce scenarios with unsupported business assumptions |
 |**Won't**| For **validation refinement questions**<br>- Generate questions for user inputs, UI controls, or API fields, bussiness rules that are not explicitly mentioned in the scenarios.<br>- Generate hardcoded values, lengths, dates, emails, phone numbers, or identifiers.<br> - Convert the questions into implementation decisions.<br>- Create additional BDD scenarios in this phase.|
 |**Won't**|Add implementation details or implementation-neutral descriptions in any scenario|
+|**Won't**| conduct Infraestructure leakege, it means, never mention infraestructure terms, enviroment, databases or SQL queries,raw storage operations, internal schemas, servers, clients, platforms, technologies, frameworks, tools, libraries, APIs, implementation-level service details etc. **EXCEPTION**: These MAY be included when the behavior being specified is inherently exposed at that technical layer, such as an API-only product behavior.|  
+|**Won't**|Include any UI or automation mechanics such as: selectors, XPath, CSS selectors, element identifiers, click element, wait for, scrolling, browser-specific operations, framework-specific commands|
 |**Won't**|Invent values or limits when they are not specified|
 |**Won't**| Produce documentation of the analysis methodology|
 ---

@@ -10,8 +10,7 @@ This reference defines how to derive behavioral scenarios from software requirem
 - Story Mapping
 The focus is on **reasoning behavior**, not on explaining the methodologies themselves.
 
----
-# General Behavioral Principles
+## General Behavioral Principles
 When analyzing a requirement:
 - Identify observable behavior instead of implementation details.
 - Separate business rules from examples.
@@ -25,6 +24,79 @@ Never:
 - Infer unspecified behavior as fact.
 - Hide unanswered questions.
 - Mix strategic objectives with user interaction flows.
+
+## Gotcha: Choosing the BDD Discovery Technique
+
+As fallow you will see detailied guideline for the differents required analysis techniques. for requirements evaluation, but before apply any technique and avoid arbitrary choices follow this rules:
+
+1. Do not select a technique based only on the presence of keywords.
+2. Choose the technique according to the primary information that must be discovered or made traceable.
+3. Them you can apply the technique and derive the scenarios.
+
+### Selection rule
+
+When multiple techniques appear applicable:
+
+1. Identify the **primary concern** of the requirement.
+2. Select the technique that best addresses that concern.
+3. Add a secondary technique only when it provides information that the primary technique cannot adequately capture.
+4. Avoid combining techniques when they produce redundant information.
+
+The selected technique must be justified by the characteristics of the requirement.
+
+>Distintions as fallow
+
+### Use Impact Mapping when the requirement is outcome-oriented
+
+Choose Impact Mapping when the requirement emphasizes:
+
+- A business or strategic objective.
+- A measurable outcome or expected impact.
+- The relationship between a goal, the actors involved, and the behavior expected to achieve the outcome.
+- Traceability from implementation decisions to business outcomes.
+
+**Primary question:**
+> What outcome are we trying to achieve, and how does the proposed behavior contribute to it?
+
+### Use Story Mapping when the requirement is journey-oriented
+
+Choose Story Mapping when the requirement emphasizes:
+
+- A user journey, workflow, or end-to-end process.
+- A sequence of activities or interactions.
+- Dependencies or transitions between user activities.
+- Incremental delivery or release slicing.
+
+**Primary question:**
+> What does the user need to accomplish, and how does the journey unfold?
+
+### Use Example Mapping when the requirement is rule-oriented
+
+Choose Example Mapping when the requirement emphasizes:
+
+- Business rules.
+- Conditions and decisions.
+- Variations of behavior.
+- Examples, boundaries, exceptions, or failure conditions.
+- Deriving concrete scenarios for validation.
+
+**Primary question:**
+> What rules govern the behavior, and which examples demonstrate that behavior?
+
+### Use a Combined Approach when multiple perspectives are necessary
+
+Combine techniques when the requirement contains two or more distinct discovery needs, such as:
+
+- Business outcome + user journey.
+- User journey + business rules.
+- Strategic objective + workflow + detailed rules.
+- Complex requirements where no single technique provides sufficient traceability.
+
+Do not combine techniques merely because the requirement is long or complex.
+
+**Primary question:**
+> Which complementary perspectives are necessary to understand the requirement completely?
+
 ---
 # Technique 1 — Example Mapping
 ## Objective
@@ -253,7 +325,7 @@ All derived scenarios must align with:
 - the selected analysis technique's principles
 - the defined behavioral quality standards
 ---
-# Non-Goals
+## Non-Goals
 This reference does not:
 - explain how to perform Example Mapping
 - explain how to perform Impact Mapping
@@ -262,23 +334,4 @@ This reference does not:
 - provide templates for non-behavioral documents
 The sole focus is on deriving **behavioral scenarios** using these techniques as reasoning tools.
 
----
-# When to Use Each Technique
-Choose the technique based on what the requirement emphasizes:
-## Use Impact Mapping when:
-- The requirement describes a strategic objective.
-- The purpose is measurable.
-- Traceability to business outcomes is required.
-## Use Story Mapping when:
-- The requirement describes a user journey or workflow.
-- Incremental delivery is expected.
-- Transitions between steps matter.
-## Use Example Mapping when:
-- The requirement contains business rules and conditions.
-- You need to explore variations (happy paths, boundaries, failures).
-- Testable scenarios are the primary output.
-## Use Combined Approach when:
-- The requirement is complex.
-- Multiple perspectives (strategic, journey, behavioral) are needed.
-- A comprehensive understanding is required.
 
