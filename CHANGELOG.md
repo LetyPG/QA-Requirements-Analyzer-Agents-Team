@@ -2,6 +2,19 @@
 
 All notable changes to this project are documented in this file.
 
+## [1.2.1] - 2026-09-21
+
+### Features
+- Added `AGENT.md` root system manifest and discovery registry implementing `agent-protocol-v1` compliance for multi-agent discovery and execution across CLI harnesses (Claude Code, Antigravity, Wrappy, Cursor, GitHub Copilot, Open Code) and IDE extensions (Cursor IDE, Antigravity IDE, VS Code, Windsurf, Devin, Codex).
+- Defined centralized agent capability index mapping the primary entry point (`orchestrator-agent`) 
+- Formalized the 4-phase Discovery & Execution Protocol (Bootstrap, Intent Matching, Delegation, Consolidation) with strict orchestration routing, state management, and isolation constraints.
+
+### Updates
+- Not applicable.   
+
+### Patches
+- Not applicable.
+
 ## [1.1.2] - 2026-09-17
 
 ### Features
