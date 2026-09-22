@@ -1,5 +1,5 @@
 {
-    "skill_name": "context-manifesto-user-guidance",
+    "skill_name": "context-manifest-guidance",
     "evals": [
         {
             "id": "01-HP",
@@ -27,7 +27,7 @@
             "prompt": "The orchestrator has completed input validation for the following user request: 'Run RF-202: The system must send an email notification when a new invoice is generated. US[As a billing manager, I want to receive an email notification when a new invoice is generated so that I can review and approve it promptly].' During validation, the orchestrator detected that the file project_context_manifesto.md IS present and non-empty in the ./project-context/ folder. Determine whether the context-manifest-guidance skill should be triggered.",
             "expected_output": "The context-manifest-guidance skill is NOT invoked. The orchestrator proceeds directly to the requirements refinement pipeline (BDD scenario generation and risk evaluation) without producing any guidance message about the missing manifest. No user-facing guidance message about creating project_context_manifesto.md is generated.",
             "files": [
-                "evals/files/negative_case/project-context/project_context_manifesto.md"
+                "./project-context/project_context_manifesto.md"
             ],
             "assertions": [
                 "The context-manifest-guidance skill is NOT triggered (no guidance message about the missing manifest is produced)",
